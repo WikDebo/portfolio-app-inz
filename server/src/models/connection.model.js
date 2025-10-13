@@ -6,11 +6,11 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
-    followerID: {
-      type: Sequelize.STRING
+    followerId: {
+      type: Sequelize.INTEGER
     },
-    followingID: {
-      type: Sequelize.STRING
+    followingId: {
+      type: Sequelize.INTEGER
     },
     followdate: {
         type:Sequelize.DATE

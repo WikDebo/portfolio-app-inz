@@ -2,7 +2,7 @@ module.exports = (sequelize, Sequelize) => {
   const Portfolio = sequelize.define(
     "portfolio", 
     {
-    id: {
+    portfolioId: {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
@@ -14,5 +14,5 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return Role;
+  return Portfolio;
 };

@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Category = sequelize.define(
-    'galleryfiles', 
+    'category', 
     {
     categoryName: {
       type: Sequelize.STRING
@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.TEXT
     },
     categoryOrder: {
-        type:Sequelize.INT
+        type:Sequelize.INTEGER
     },
   });
   return Category;
