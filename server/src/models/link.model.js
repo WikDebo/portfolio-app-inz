@@ -6,28 +6,12 @@ module.exports = (sequelize, Sequelize) => {
     },
     link: {
       type: Sequelize.STRING
-    }
-    provider:{
-        type: Sequelize.STRING
-    }
+    },
   });
 
   return Link;
 };
-OR  this +
-module.exports = (sequelize, Sequelize) => {
-  const LinkProvider = sequelize.define("linkProvider", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true
-    },
-    provider:{
-        type: Sequelize.STRING
-    }
-  });
 
-  return LinkProvider;
-};
 /*
 db.linkProvider.belongsToMany(db.links, {
   through: "link_connection"
@@ -38,5 +22,7 @@ db.linkProvider.belongsToMany(db.links, {
 
 db.LinkProvider = ["Facebook","Instagram", "Linkedin", "Dribbble", "X",
 "Bluesky","Figma", "Tiktok", "Pinterest", "Youtube", "Other",];
+
+
 
 */

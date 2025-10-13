@@ -1,13 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
-  const Connection = sequelize.define("connections", {
+  const GalleryFile = sequelize.define("galleryfiles", {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
-    followerID: {
+    fileName: {
       type: Sequelize.STRING
     },
-    followingID: {
+    caption: {
       type: Sequelize.STRING
     },
     followdate: {
@@ -16,8 +16,7 @@ module.exports = (sequelize, Sequelize) => {
     status: {
         type:Sequelize.ENUM("new","seen"),
         defaultValue: "new",
-        },
-    }
+      },
   });
-  return Connection;
+  return GalleryFile;
 };

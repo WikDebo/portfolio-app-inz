@@ -13,7 +13,7 @@ module.exports = (sequelize, Sequelize) => {
     password: {
         type: Sequelize.STRING,
         allowNull:false
-    }/*,
+    },
     usertitle: {
         type: Sequelize.STRING
     },
@@ -22,8 +22,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     profilephoto: {
         type: Sequelize.STRING
-    }
-    */
+    },
     });
     return User;
 };
