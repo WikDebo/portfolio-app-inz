@@ -91,7 +91,7 @@ db.user.hasOne(db.portfolio,{
   onDelete: 'CASCADE'
 });
 db.portfolio.belongsTo(db.user,{
-  foreignKey: "portfolioId",
+  foreignKey: "userId",
   onDelete: 'CASCADE'
 });
 
