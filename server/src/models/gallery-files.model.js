@@ -1,8 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
-  const GalleryFile = sequelize.define("galleryfiles", {
-    id: {
+  const GalleryFiles = sequelize.define("gallery_files", {
+    id:  {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     fileName: {
       type: Sequelize.STRING
@@ -10,13 +11,10 @@ module.exports = (sequelize, Sequelize) => {
     caption: {
       type: Sequelize.STRING
     },
-    followdate: {
-        type:Sequelize.DATE
+    uploadedAt: {
+      type: Sequelize.DATE, 
+      defaultValue: Sequelize.NOW 
     },
-    status: {
-        type:Sequelize.ENUM("new","seen"),
-        defaultValue: "new",
-      },
   });
-  return GalleryFile;
+  return GalleryFiles;
 };

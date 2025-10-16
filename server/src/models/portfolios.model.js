@@ -1,10 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-  const Portfolio = sequelize.define(
-    "portfolio", 
+  const Portfolios = sequelize.define(
+    "portfolios", 
     {
-    portfolioId: {
+    id: {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     title: {
       type: Sequelize.STRING
@@ -14,5 +15,5 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return Portfolio;
+  return Portfolios;
 };

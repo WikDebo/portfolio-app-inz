@@ -1,10 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
   const LinkProvider = sequelize.define(
-    'linkProvider', 
+    'link_Provider', 
     {
     id: {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     provider:{
         type: Sequelize.STRING

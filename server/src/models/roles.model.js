@@ -1,13 +1,14 @@
 module.exports = (sequelize, Sequelize) => {
-  const Tool = sequelize.define("tools", {
+  const Roles = sequelize.define("roles", {
     id: {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
-    toolname: {
+    name: {
       type: Sequelize.STRING
     }
   });
 
-  return Tool;
+  return Roles;
 };

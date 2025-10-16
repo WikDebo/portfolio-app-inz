@@ -1,15 +1,16 @@
 module.exports = (sequelize, Sequelize) => {
-  const Link = sequelize.define("links", {
+  const Links = sequelize.define("links", {
     id: {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     link: {
       type: Sequelize.STRING
     },
   });
 
-  return Link;
+  return Links;
 };
 
 /*

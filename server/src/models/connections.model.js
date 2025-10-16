@@ -1,10 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-  const Connection = sequelize.define(
+  const Connections = sequelize.define(
     'connections', 
     {
-    id: {
+    id:  {
       type: Sequelize.INTEGER,
-      primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     followerId: {
       type: Sequelize.INTEGER
@@ -20,5 +21,5 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: "new",
       },
   });
-  return Connection;
+  return Connections;
 };

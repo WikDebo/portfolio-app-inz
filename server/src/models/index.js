@@ -8,6 +8,10 @@ const sequelize = new Sequelize(
     {
         host: config.HOST,
         dialect: config.dialect,
+        define: {
+          noPrimaryKey: true,
+          timestamps: false,
+        },
         pool: {
             max: config.pool.max,
             min: config.pool.min,
@@ -22,44 +26,45 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.user = require("../models/user.model.js")(sequelize,Sequelize);
-db.role = require("../models/role.model.js")(sequelize, Sequelize);
-db.tool = require("../models/tool.model.js")(sequelize,Sequelize);
-db.link = require("../models/link.model.js")(sequelize,Sequelize);
+db.users = require("./users.model.js")(sequelize,Sequelize);
+db.roles = require("./roles.model.js")(sequelize, Sequelize);
+db.tools = require("./tools.model.js")(sequelize,Sequelize);
+db.links = require("./links.model.js")(sequelize,Sequelize);
 db.linkProvider = require("../models/link-provider.model.js")(sequelize,Sequelize);
-db.connections = require("../models/connection.model.js")(sequelize,Sequelize);
-db.portfolio = require("../models/portfolio.model.js")(sequelize,Sequelize);
+db.connections = require("../models/connections.model.js")(sequelize,Sequelize);
+db.portfolios = require("./portfolios.model.js")(sequelize,Sequelize);
 db.portfolioFiles = require("../models/portfolio-files.model.js")(sequelize,Sequelize);
 db.category = require("../models/category.model.js")(sequelize,Sequelize);
-db.galleryFile = require("../models/gallery-files.model.js")(sequelize,Sequelize);
+db.galleryFiles = require("../models/gallery-files.model.js")(sequelize,Sequelize);
 db.likes = require("../models/likes.model.js")(sequelize,Sequelize);
 
-db.role.belongsToMany(db.user, {
-  through: "user_roles"
+db.roles.belongsToMany(db.users, {
+  through: "user_roles",
+  as: "roleId",
 });
-db.user.belongsToMany(db.role, {
+db.users.belongsToMany(db.roles, {
   through: "user_roles"
 });
 
 db.ROLES = ["admin","user"];
 
-db.user.belongsToMany(db.user,{
+db.users.belongsToMany(db.users,{
   through: db.connections,
   as: "Followers",
   foreignKey:'followingId',
   otherKey: 'followerId'
 });
-db.user.belongsToMany(db.user,{
+db.users.belongsToMany(db.users,{
   through: db.connections,
   as: "Following",
   foreignKey:'followerId',
   otherKey: 'followingId'
 });
 
-db.tool.belongsToMany(db.user, {
+db.tools.belongsToMany(db.users, {
   through: "user_tools"
 });
-db.user.belongsToMany(db.tool, {
+db.users.belongsToMany(db.tools, {
   through: "user_tools"
 });
 
@@ -68,35 +73,33 @@ db.TOOLS = ["Krita","Procrate", "Blender", "Photoshop", "Painter",
 "Ink", "Oil Paint", "Acrylic Paint", "Watercolour Paint", "Pencil", "Charcoal", "Stylus", "Pastel Pencil", 
 "Colored Pencils" , "Crayons" , "Pen"];
 
-db.link.belongsTo(db.user,{
+db.links.belongsTo(db.users,{
   foreignKey: "userId",
-  as: "user",
   onDelete: 'CASCADE'
 });
-db.user.hasMany(db.link, {as: "link",  onDelete: 'CASCADE'});
+db.users.hasMany(db.links, {as: "link",  onDelete: 'CASCADE'});
 
-db.linkProvider.belongsToMany(db.link, {
+db.linkProvider.belongsToMany(db.links, {
   through: "link_connection",
 });
-db.link.belongsToMany(db.linkProvider, {
+db.links.belongsToMany(db.linkProvider, {
   through: "link_connection"
 });
 
 db.LinkProvider = ["Facebook","Instagram", "Linkedin", "Dribbble", "X",
 "Bluesky","Figma", "Tiktok", "Pinterest", "Youtube", "Other",];
 
-db.user.hasOne(db.portfolio,{
+db.users.hasOne(db.portfolios,{
   foreignKey: "userId",
-  as: 'owner', 
   onDelete: 'CASCADE'
 });
-db.portfolio.belongsTo(db.user,{
+db.portfolios.belongsTo(db.users,{
   foreignKey: "userId",
   onDelete: 'CASCADE'
 });
 
-db.portfolio.hasMany(db.portfolioFiles, {
-  as: "files",
+db.portfolios.hasMany(db.portfolioFiles, {
+
   onDelete: 'CASCADE'
 });
 
@@ -107,18 +110,18 @@ db.portfolioFiles.belongsToMany(db.category, {
   through: "category_files"
 });
 
-db.user.hasMany(db.galleryFile, { as: "files", onDelete: 'CASCADE' });
-db.galleryFile.belongsTo(db.user,{
+db.users.hasMany(db.galleryFiles, { as: "files", onDelete: 'CASCADE' });
+db.galleryFiles.belongsTo(db.users,{
   foreignKey: "userId",
   onDelete: 'CASCADE'
 });
 
-db.galleryFile.belongsToMany( db.user, {
+db.galleryFiles.belongsToMany( db.users, {
   through: db.likes, foreignKey: 'fileId', 
   otherKey: 'userId', 
   //as: 'likedBy'
 });
-db.user.belongsToMany(db.galleryFile , {
+db.users.belongsToMany(db.galleryFiles , {
   through: db.likes, foreignKey: 'userId', 
   otherKey: 'fileId', 
   //as: 'likes'
