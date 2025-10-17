@@ -1,24 +1,17 @@
-const util = require("util");
-const multer = require("multer");
 
-const imageFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb("Please upload only images.", false);
-  }
-};
+const multer = require("multer");
+const path = require("path");
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => 
     cb(null, __basedir + "/resources/static/assets/uploads/"),
   filename: (req, file, cb) => 
-    cb(null, `${Date.now()}-userId-${file.originalname}`),
+    cb(null, Date.now() + path.extname(file.originalname)),
 });
 
-let uploadFile = multer({
+const uploadFile = multer({
   storage: storage,
-  fileFilter: imageFilter,
+  limits: { fileSize: 1000000 }
 });
 
 module.exports = uploadFile;

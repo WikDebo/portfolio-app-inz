@@ -16,8 +16,6 @@ module.exports = (sequelize, Sequelize) => {
     categoryOrder: {
         type:Sequelize.INTEGER
     },
-    //createdAt: false,  Don't create createdAt
-    //updatedAt: false,  Don't create updatedAt
   });
   return Category;
 };
