@@ -26,6 +26,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.refreshToken = require("../models/refreshToken.model.js")(sequelize, Sequelize);
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.roles = require("./roles.model.js")(sequelize, Sequelize);
 db.tools = require("./tools.model.js")(sequelize, Sequelize);
@@ -39,9 +40,15 @@ db.galleryFiles = require("./gallery-files.model.js")(sequelize, Sequelize);
 db.likes = require("./likes.model.js")(sequelize, Sequelize);
 
 //Association
-//users - roles
+//users - roles + token refresgh
 db.roles.belongsToMany(db.users, { through: "user_roles", as: "users" });
 db.users.belongsToMany(db.roles, { through: "user_roles", as: "roles" });
+db.refreshToken.belongsTo(db.users, {
+  foreignKey: 'userId', targetKey: 'id'
+});
+db.users.hasOne(db.refreshToken, {
+  foreignKey: 'userId', targetKey: 'id'
+});
 db.ROLES = ["admin", "user"];
 
 //followers - following (connections db)

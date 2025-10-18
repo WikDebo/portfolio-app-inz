@@ -6,25 +6,26 @@ const GalleryFiles = db.galleryFiles;
 
 //File upload
 exports.uploadGalleryFiles = async (req, res) => {
-  console.log("User ID from token:", req.userId);
+  console.log(req.file);
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "You must select a file." });
-    }
+        console.log( req.file);
+      if (req.file == undefined) {
+        return res.status(400).json({ message: "You must select a file." });
+      }
+      const savedFile = await GalleryFiles.create({
+        fileName: req.file.originalname,
+        caption: req.body.caption || null,
+        userId: req.userId
+      });
 
-    const savedFile = await GalleryFiles.create({
-      fileName: req.file.originalname,
-      caption: req.body.caption || null,
-      userId: req.userId
+      res.status(201).json({
+        message: "File uploaded successfully",
+        file: savedFile
+      });
+    } catch (error) {
+      res.status(500).send({
+        message: `Could not upload the file: ${req.file.originalname}. ${err}`,
     });
-
-    res.status(201).json({
-      message: "File uploaded successfully",
-      file: savedFile
-    });
-  } catch (error) {
-    console.error("Upload error:", error);
-    res.status(500).json({ message: "Error uploading file", error: error.message });
   }
 };
 
@@ -34,7 +35,6 @@ exports.getMyGalleryFiles = async (req, res) => {
     const files = await GalleryFiles.findAll({
       where: { userId: req.userId },
     });
-
     res.status(200).json(files);
   } catch (error) {
     console.error("Get files error:", error);
