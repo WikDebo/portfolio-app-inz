@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
     fileName: {
       type: Sequelize.STRING
     },
+    type: {
+      type: Sequelize.STRING
+    },
     caption: {
       type: Sequelize.STRING
     },

@@ -1,5 +1,7 @@
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/user.controller");
+const settingsController = require("../controllers/user.settings.controller")
+const uploadProfilePhoto = require("../middleware/uploadProfile");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -22,4 +24,9 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
+  
+  app.put("/api/user/update", [authJwt.verifyToken],uploadProfilePhoto.single('profilephoto'), settingsController.updateProfile);
+  app.delete("/api/user/delete/profilephoto", [authJwt.verifyToken], settingsController.deleteProfilePhoto);
+  app.delete("/api/user/delete/:id", [authJwt.verifyToken], settingsController.deleteAccount);
+
 };
