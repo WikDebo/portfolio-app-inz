@@ -61,8 +61,8 @@ exports.signin = (req,res) => {
             });
         }
 
-          const token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: config.jwtExpiration
+        const token = jwt.sign({ id: user.id }, config.secret, {
+          expiresIn: config.jwtExpiration
       });
 
         let refreshToken = await RefreshToken.createToken(user);

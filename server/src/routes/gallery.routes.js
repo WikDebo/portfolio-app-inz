@@ -12,16 +12,16 @@ router.use((req, res, next) => {
 
 // Upload a single file
 router.post(
-  "/upload",
+  "/user/upload",
   authJwt.verifyToken,
   uploadFile.single('file'),
   controller.uploadGalleryFiles
 );
 
-// Get all files of the logged-in user (my gallery)
-router.get("/my-files", authJwt.verifyToken, controller.getMyGalleryFiles);
-
-// Delete a file by ID (only owner)
-router.delete("/files/:id", authJwt.verifyToken, controller.deleteFile);
+// Get all files of the logged-in user + selected user
+router.get("/user/files", authJwt.verifyToken, controller.getMyGalleryFiles);
+router.get("/:userId/files", authJwt.verifyToken, controller.getUserGallery);
+// Delete a file 
+router.delete("/user/files/:id", authJwt.verifyToken, controller.deleteFile);
 
 module.exports = router;

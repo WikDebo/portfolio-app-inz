@@ -14,19 +14,15 @@ module.exports = function(app) {
 
   app.get("/api/test/all", controller.allAccess);
 
-  app.get(
-    "/api/test/user",
-    [authJwt.verifyToken],
-    controller.userBoard
-  );
-  app.get(
-    "/api/test/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminBoard
-  );
+  app.get("/api/test/user",[authJwt.verifyToken],controller.userBoard);
+
+  app.get("/api/test/admin",[authJwt.verifyToken, authJwt.isAdmin],controller.adminBoard);
   
+   //update account + profile pic + delete account
+  app.get("/api/user/myprofile", [authJwt.verifyToken], settingsController.getMyProfile);
+  app.get("/api/user/:username", [authJwt.verifyToken], settingsController.getUser);
   app.put("/api/user/update", [authJwt.verifyToken],uploadProfilePhoto.single('profilephoto'), settingsController.updateProfile);
   app.delete("/api/user/delete/profilephoto", [authJwt.verifyToken], settingsController.deleteProfilePhoto);
-  app.delete("/api/user/delete/:id", [authJwt.verifyToken], settingsController.deleteAccount);
+  app.delete("/api/user/delete", [authJwt.verifyToken], settingsController.deleteAccount);
 
 };
