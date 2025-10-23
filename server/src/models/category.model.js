@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.TEXT
     },
     categoryOrder: {
-        type:Sequelize.INTEGER
+        type:Sequelize.INTEGER, 
     },
   });
   return Category;

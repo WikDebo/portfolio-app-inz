@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const db = require('../models');
+const path = require("path");
+const fs = require("fs");
+const db = require("../models");
 
 const GalleryFiles = db.galleryFiles;
 
@@ -13,23 +13,23 @@ exports.uploadGalleryFiles = async (req, res) => {
     const savedFile = await GalleryFiles.create({
       type: req.file.mimetype,
       fileName: req.file.originalname,
+      path: req.file.path,
       caption: req.body.caption || null,
       userId: req.userId,
     });
 
     res.status(201).json({
       message: "File uploaded successfully",
-      file: savedFile
+      file: savedFile,
     });
   } catch (err) {
     console.error("Upload error:", err);
     res.status(500).json({
       message: `Could not upload the file: ${req.file.originalname}`,
-      error: err.message
+      error: err.message,
     });
   }
 };
-
 //shows all files of the user
 exports.getMyGalleryFiles = async (req, res) => {
   try {
@@ -39,16 +39,18 @@ exports.getMyGalleryFiles = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     const files = await GalleryFiles.findAll({
-      where: { userId: userId }
+      where: { userId: userId },
     });
     res.status(200).json(files);
   } catch (err) {
     console.error("Get files error:", err);
-    res.status(500).json({ message: "Error fetching files", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching files", error: err.message });
   }
 };
 
- //Delete a file (only owner + admin)
+//Delete a file (only owner + admin)
 exports.deleteFile = async (req, res) => {
   try {
     const userId = req.userId;
@@ -62,8 +64,10 @@ exports.deleteFile = async (req, res) => {
     }
 
     // only user or admin can delete
-    if (userRole !== 'admin' && file.userId !== userId) {
-      return res.status(403).json({ message: "Not authorized to delete this file" });
+    if (userRole !== "admin" && file.userId !== userId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this file" });
     }
 
     // Delete from filesystem
@@ -75,9 +79,10 @@ exports.deleteFile = async (req, res) => {
     await GalleryFiles.destroy({ where: { id: targetedFileId } });
 
     return res.json({ message: "File was deleted successfully!" });
-
   } catch (error) {
     console.error("Delete file error:", error);
-    return res.status(500).json({ message: "Error deleting file", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error deleting file", error: error.message });
   }
 };

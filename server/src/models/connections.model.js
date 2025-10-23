@@ -5,13 +5,15 @@ module.exports = (sequelize, Sequelize) => {
     id:  {
       type: Sequelize.INTEGER,
         primaryKey: true,
-        autoIncrement: true, 
+        autoIncrement: true,
     },
     followerId: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull:false
     },
     followingId: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull:false
     },
     followdate: {
         type:Sequelize.DATE

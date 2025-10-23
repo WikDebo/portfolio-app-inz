@@ -35,6 +35,7 @@ exports.updateProfile = async(req, res) => {
     res.status(500).send({ message: "Error updating profile: " + err.message });
   }
 };
+
 exports.getMyProfile = async(req, res) => {
   try {
      const currentUser = await User.findByPk(req.userId, { attributes: { exclude: ["password"] } });
@@ -49,7 +50,6 @@ exports.getMyProfile = async(req, res) => {
 };
 exports.getUser = async (req, res) => {
   const username = req.params.username; // username in the URL
-
   try {
     const user = await User.findOne({
       where: { username: username },
@@ -68,7 +68,6 @@ exports.getUser = async (req, res) => {
 
 exports.deleteProfilePhoto = async(req, res) => {
   const userId = req.userId;
-
   try {
     const user = await User.findByPk(userId);
     if (user && user.profilephoto) {
