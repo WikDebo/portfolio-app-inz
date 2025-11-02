@@ -1,10 +1,10 @@
-const path = require("path");
 const fs = require("fs");
 const db = require("../models");
-
+const { data } = require("react-router-dom");
 const GalleryFiles = db.galleryFiles;
+const User = db.users;
 
-//File upload
+  //Uploading a file
 exports.uploadGalleryFiles = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "You must select a file." });
@@ -13,7 +13,7 @@ exports.uploadGalleryFiles = async (req, res) => {
     const savedFile = await GalleryFiles.create({
       type: req.file.mimetype,
       fileName: req.file.originalname,
-      path: req.file.path,
+      path: req.file.path, 
       caption: req.body.caption || null,
       userId: req.userId,
     });
@@ -30,16 +30,11 @@ exports.uploadGalleryFiles = async (req, res) => {
     });
   }
 };
-//shows all files of the user
+//All files of user
 exports.getMyGalleryFiles = async (req, res) => {
   try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(404).json({ message: "User not found" });
-    }
     const files = await GalleryFiles.findAll({
-      where: { userId: userId },
+      where: { userId: req.userId}, order: [["uploadedAt", "DESC"]], 
     });
     res.status(200).json(files);
   } catch (err) {
@@ -49,40 +44,51 @@ exports.getMyGalleryFiles = async (req, res) => {
       .json({ message: "Error fetching files", error: err.message });
   }
 };
+//All files of other users
+exports.getUserGallery = async (req, res) => {
+  const username = req.params.username;
+  try {
+     const user = await User.findOne({
+      where: { username },
+      attributes: ["id"],
+    });
 
-//Delete a file (only owner + admin)
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+    const files = await GalleryFiles.findAll({
+      where: { userId: user.id},
+      attributes: ["id", "caption","path","userId"],
+      order: [["uploadedAt", "DESC"]] ,
+    });
+
+    res.status(200).send(files);
+  } catch (err) {
+    console.error("Get files error:", err);
+    res
+      .status(500)
+      .send({ message: "Error fetching files", error: err.message });
+  }
+};
+
+//Deleting a file
 exports.deleteFile = async (req, res) => {
   try {
-    const userId = req.userId;
-    const userRole = req.userRole;
-    const targetedFileId = req.params.id;
-
-    // Find file record
-    const file = await GalleryFiles.findOne({ where: { id: targetedFileId } });
-    if (!file) {
-      return res.status(404).json({ message: "File not found" });
-    }
-
-    // only user or admin can delete
-    if (userRole !== "admin" && file.userId !== userId) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to delete this file" });
-    }
-
-    // Delete from filesystem
-    if (fs.existsSync(file.path)) {
+    const file = req.fileRecord;
+//deleting from system
+    if (file.path && fs.existsSync(file.path)) {
       fs.unlinkSync(file.path);
     }
 
-    // Delete from DB
-    await GalleryFiles.destroy({ where: { id: targetedFileId } });
+    // Deleting from db
+    await GalleryFiles.destroy({ where: { id: file.id } });
 
     return res.json({ message: "File was deleted successfully!" });
   } catch (error) {
     console.error("Delete file error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error deleting file", error: error.message });
+    return res.status(500).json({
+      message: "Error deleting file",
+      error: error.message,
+    });
   }
 };

@@ -16,7 +16,7 @@ exports.signup = (req, res) => {
     .then(user => {
       if (req.body.roles) {
         Role.findAll({
-          where: {
+          where: { //use for links tools?
             name: {
               [Op.or]: req.body.roles
             }
@@ -123,5 +123,26 @@ exports.refreshToken = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).send({ message: err });
+  }
+};
+exports.signout = async (req, res) => {
+  const { refreshToken: requestToken } = req.body;
+
+  if (!requestToken) {
+    return res.status(400).send({ message: "Refresh token is required!" });
+  }
+
+  try {
+    const token = await RefreshToken.findOne({ where: { token: requestToken } });
+
+    if (!token) {
+      return res.status(400).send({ message: "Refresh token not found!" });
+    }
+
+    await RefreshToken.destroy({ where: { id: token.id } });
+    return res.status(200).send({ message: "Logged out successfully!" });
+
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
   }
 };

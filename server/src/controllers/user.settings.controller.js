@@ -4,30 +4,38 @@ const User = db.users;
 const fs = require("fs");
 const path = require("path");
 
-exports.updateProfile = async(req, res) => {
+exports.updateProfile = async (req, res) => {
   const userId = req.userId;
- // Clone request body 
   const updatedData = {};
   try {
-  if (req.body.username) updatedData.username = req.body.username;
-  if (req.body.email) updatedData.email = req.body.email;
-  if ('usertitle' in req.body) updatedData.usertitle = req.body.usertitle || null;
-  if ('bio' in req.body) updatedData.bio = req.body.bio || null;
-  if (req.body.password) updatedData.password = bcrypt.hashSync(req.body.password, 8);
-  if (req.file) {
+    if (req.body.username) updatedData.username = req.body.username;
+    if (req.body.email) updatedData.email = req.body.email;
+    if ("usertitle" in req.body)
+      updatedData.usertitle = req.body.usertitle || null;
+    if ("bio" in req.body) updatedData.bio = req.body.bio || null;
+    if (req.file) {
       const user = await User.findByPk(userId);
       // Delete old profile picture if exists
       if (user && user.profilephoto) {
-        const oldPath = path.join(__basedir, "/resources/static/assets/uploads/", user.profilephoto);
+        const oldPath = path.join(
+          __basedir,
+          "/resources/static/assets/uploads/",
+          user.profilephoto
+        );
         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
 
       updatedData.profilephoto = req.file.filename;
     }
- const [affectedRows] = await User.update(updatedData, { where: { id: userId } });
+    const [affectedRows] = await User.update(updatedData, {
+      where: { id: userId },
+    });
 
     if (affectedRows === 1) {
-      res.send({ message: "Profile was updated successfully." });
+      const updatedUser = await User.findByPk(userId, {
+        attributes: { exclude: ["password"] },
+      });
+      res.send({ message: "Profile updated successfully.", user: updatedUser });
     } else {
       res.send({ message: "Cannot update profile." });
     }
@@ -35,25 +43,47 @@ exports.updateProfile = async(req, res) => {
     res.status(500).send({ message: "Error updating profile: " + err.message });
   }
 };
-
-exports.getMyProfile = async(req, res) => {
+exports.changePassword = async (req, res) => {
   try {
-     const currentUser = await User.findByPk(req.userId, { attributes: { exclude: ["password"] } });
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const valid = bcrypt.compareSync(oldPassword, user.password);
+    if (!valid)
+      return res.status(400).send({ message: "Incorrect current password" });
+
+    user.password = bcrypt.hashSync(newPassword, 8);
+    await user.save();
+    res.send({ message: "Password updated successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: "Error updating password: " + err.message });
+  }
+};
+exports.getMyProfile = async (req, res) => {
+  try {
+    const currentUser = await User.findByPk(req.userId, {
+      attributes: { exclude: ["password"] },
+    });
 
     if (!currentUser) {
       return res.status(404).send({ message: "User not found" });
     }
     res.send(currentUser);
   } catch (err) {
-    res.status(500).send({ message: "Error retrieving profile: " + err.message });
+    res
+      .status(500)
+      .send({ message: "Error retrieving profile: " + err.message });
   }
 };
 exports.getUser = async (req, res) => {
-  const username = req.params.username; // username in the URL
+  const username = req.params.username;
   try {
     const user = await User.findOne({
       where: { username: username },
-      attributes: { exclude: ["password"] }, 
+      attributes: { exclude: ["password"] },
     });
 
     if (!user) {
@@ -62,20 +92,32 @@ exports.getUser = async (req, res) => {
 
     res.send(user);
   } catch (err) {
-    res.status(500).send({ message: err.message || "Some error occurred while retrieving the user." });
+    res
+      .status(500)
+      .send({
+        message:
+          err.message || "Some error occurred while retrieving the user.",
+      });
   }
 };
 
-exports.deleteProfilePhoto = async(req, res) => {
+exports.deleteProfilePhoto = async (req, res) => {
   const userId = req.userId;
   try {
     const user = await User.findByPk(userId);
     if (user && user.profilephoto) {
-      const oldPath = path.join(__basedir, "/resources/static/assets/uploads/", user.profilephoto);
+      const oldPath = path.join(
+        __basedir,
+        "/resources/static/assets/uploads/",
+        user.profilephoto
+      );
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }
 
-    const [affectedRows] = await User.update({ profilephoto: null }, { where: { id: userId } });
+    const [affectedRows] = await User.update(
+      { profilephoto: null },
+      { where: { id: userId } }
+    );
 
     if (affectedRows === 1) {
       res.send({ message: "Profile was updated successfully." });
@@ -88,8 +130,8 @@ exports.deleteProfilePhoto = async(req, res) => {
 };
 
 exports.deleteAccount = async (req, res) => {
-  const userId = req.userId; 
-  const targetUserId = req.params.id;  
+  const userId = req.userId;
+  const targetUserId = req.params.id;
 
   try {
     const currentUser = await User.findByPk(userId);
@@ -97,19 +139,25 @@ exports.deleteAccount = async (req, res) => {
       return res.status(404).send({ message: "Current user not found" });
     }
 
-    const condition = (currentUser.role === 'admin') 
-      ? { id: targetUserId } 
-      : { id: targetUserId, id: userId };
+    const condition =
+      currentUser.role === "admin"
+        ? { id: targetUserId }
+        : { id: targetUserId, id: userId };
 
     const userDeleted = await User.destroy({ where: condition });
 
     if (userDeleted === 1) {
       return res.send({ message: "Account was deleted successfully!" });
     } else {
-      return res.status(403).send({ message: "Not authorized to delete this account or user not found" });
+      return res
+        .status(403)
+        .send({
+          message: "Not authorized to delete this account or user not found",
+        });
     }
-
   } catch (err) {
-    return res.status(500).send({ message: "Could not delete the account: " + err.message });
+    return res
+      .status(500)
+      .send({ message: "Could not delete the account: " + err.message });
   }
 };
