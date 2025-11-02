@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    categoryId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
   });
   return PortfolioFiles;
 };

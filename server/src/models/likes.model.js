@@ -6,6 +6,14 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true, 
+    }, 
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    fileId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
     },
     likedAt: {
         type:Sequelize.DATE

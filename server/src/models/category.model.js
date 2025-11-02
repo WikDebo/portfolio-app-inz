@@ -16,6 +16,10 @@ module.exports = (sequelize, Sequelize) => {
     categoryOrder: {
         type:Sequelize.INTEGER, 
     },
+    portfolioId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
   });
   return Category;
 };

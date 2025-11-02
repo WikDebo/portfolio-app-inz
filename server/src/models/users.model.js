@@ -28,7 +28,6 @@ module.exports = (sequelize, Sequelize) => {
     profilephoto: {
         type: Sequelize.STRING
     },
-
     });
     return Users;
 };

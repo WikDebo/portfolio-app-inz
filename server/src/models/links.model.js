@@ -1,5 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-  const Links = sequelize.define("links", {
+  const Links = sequelize.define(
+    "links", {
     id: {
       type: Sequelize.INTEGER,
         primaryKey: true,
@@ -8,22 +9,11 @@ module.exports = (sequelize, Sequelize) => {
     link: {
       type: Sequelize.STRING
     },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
   });
 
   return Links;
 };
-
-/*
-db.linkProvider.belongsToMany(db.links, {
-  through: "link_connection"
-});
-db.linkProvider.belongsToMany(db.links, {
-  through: "link_connection"
-});
-
-db.LinkProvider = ["Facebook","Instagram", "Linkedin", "Dribbble", "X",
-"Bluesky","Figma", "Tiktok", "Pinterest", "Youtube", "Other",];
-
-
-
-*/

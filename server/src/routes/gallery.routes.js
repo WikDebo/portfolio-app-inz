@@ -22,7 +22,7 @@ router.post(
 
 // Get all files of the logged-in user + chosen user
 router.get("/user/files", authJwt.verifyToken, controller.getMyGalleryFiles);
-router.get("/:userId/files", authJwt.verifyToken, controller.getUserGallery);
+router.get("/:username/files", authJwt.verifyToken, controller.getUserGallery);
 // Delete a file by ID (only owner)
 router.delete("/user/files/:id", authJwt.verifyToken, checkFileExists, checkPermission, controller.deleteFile);
 

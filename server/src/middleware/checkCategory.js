@@ -4,7 +4,7 @@ const Portfolio = db.portfolios;
 
 module.exports = async (req, res, next) => {
   try {
-    const categoryId = req.params.id;
+    const categoryId = req.params.categoryId;
 
     if (!categoryId) {
       return res.status(400).json({ message: "Category ID is required." });

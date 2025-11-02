@@ -8,10 +8,10 @@ module.exports = async (req, res, next) => {
     if (!file) {
       return res.status(404).json({ message: "File not found" });
     }
-
-    req.fileRecord = file; 
+    req.fileRecord = file;
+    next();
   } catch (err) {
-    console.error("checkFile error:", err);
+    console.error("checkFileExists error:", err);
     res.status(500).json({ message: "Error verifying file", error: err.message });
   }
 };

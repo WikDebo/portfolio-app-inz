@@ -8,10 +8,17 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true, 
     },
     title: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      defaultValue: "Portfolio",
     },
     description: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      defaultValue: "It's my first portfolio",
+    },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      unique: true,
     },
   });
 

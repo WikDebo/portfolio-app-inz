@@ -1,4 +1,3 @@
-// middleware/checkOwnershipOrAdmin.js
 module.exports = (req, res, next) => {
   const { userId, userRole, fileRecord } = req;
 
