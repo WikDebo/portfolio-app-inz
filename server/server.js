@@ -28,7 +28,7 @@ app.use('/gallery', galleryRoutes);
 const portfolioRoutes = require('./src/routes/portfolio.routes');
 app.use('/portfolio', portfolioRoutes); 
 const connectionRoutes = require('./src/routes/connections.routes');
-app.use('/connection', connectionRoutes);
+app.use('/connection', connectionRoutes); 
 const likesRoutes = require("./src/routes/likes.routes");
 app.use('/likes', likesRoutes);
 const Roles = db.roles;
@@ -51,8 +51,6 @@ async function initial() {
   );
 
 }
-
-
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
