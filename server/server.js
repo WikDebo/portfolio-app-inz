@@ -43,12 +43,12 @@ app.use("/api/feed", feedRoutes);
 const searchRoutes = require("./src/routes/search.routes");
 app.use('/api/', searchRoutes);
 
-db.sequelize.sync({force: true}).then(() => {
+/*db.sequelize.sync({force: true}).then(() => {
   console.log('Drop and Resync Db');
   initial();
 });
-/*/ after finishing
-db.sequelize.sync();*/ 
+/ after finishing*/ 
+db.sequelize.sync();
 
 async function initial() {
   await Roles.bulkCreate(
