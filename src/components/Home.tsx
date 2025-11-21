@@ -1,33 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import FeedService from "../services/feed.service";
+import type { IPost } from "../types/post.type";
+import Pagination from "./Pagination";
+import FeedGrid from "./FeedGrid";
 
-import { getPublicContent } from "../services/user.service";
+const HomePage: React.FC = () => {
+  const [posts, setPosts] = useState<IPost[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-const Home: React.FC = () => {
-  const [content, setContent] = useState<string>("");
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await FeedService.getHomeFeed(page, 25);
+      setPosts(res.data);
+
+      // Stops the page when less than 25
+      setHasMore(res.data.length === 25);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    getPublicContent().then(
-      (response) => {
-        setContent(response.data);
-      },
-      (error) => {
-        const _content =
-          (error.response && error.response.data) ||
-          error.message ||
-          error.toString();
-
-        setContent(_content);
-      }
-    );
-  }, []);
+    fetchPosts();
+  });
 
   return (
-    <div className="container">
-      <header style={{ padding: "20px", backgroundColor: "#eee" }}>
-        <h3>{content}</h3>
-      </header>
-    </div>
+    <>
+      <div className="home">
+        {loading && <p>Loading...</p>}
+        <h2>Recent posts</h2>
+        <br></br>
+        <FeedGrid items={posts} />
+
+        <Pagination
+          page={page}
+          totalPages={hasMore ? page + 1 : page}
+          setPage={setPage}
+        />
+      </div>
+    </>
   );
 };
 
-export default Home;
+export default HomePage;

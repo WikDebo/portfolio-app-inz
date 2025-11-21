@@ -1,6 +1,6 @@
 const util = require("util");
 const multer = require("multer");
-const maxSize = 4 * 1024 * 1024;
+//const maxSize = 4 * 1024 * 1024;
 
 const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
@@ -21,7 +21,7 @@ let storage = multer.diskStorage({
 const uploadPortfolioFile = multer({
   storage: storage,
   fileFilter: imageFilter,
-  limits: { fileSize: maxSize },
+  ///limits: { fileSize: maxSize },
 })
 
 

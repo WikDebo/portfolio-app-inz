@@ -1,19 +1,20 @@
 const fs = require("fs");
 const db = require("../models");
-const { data } = require("react-router-dom");
 const GalleryFiles = db.galleryFiles;
 const User = db.users;
 
-  //Uploading a file
+// Upload in gallery
 exports.uploadGalleryFiles = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "You must select a file." });
   }
   try {
+    console.log("req.body:", req.body); // to check
+    console.log("req.file:", req.file);
     const savedFile = await GalleryFiles.create({
       type: req.file.mimetype,
       fileName: req.file.originalname,
-      path: req.file.path, 
+      path: `/uploads/${req.file.filename}` ,
       caption: req.body.caption || null,
       userId: req.userId,
     });
@@ -30,11 +31,13 @@ exports.uploadGalleryFiles = async (req, res) => {
     });
   }
 };
-//All files of user
+
+//all files of the logged in user
 exports.getMyGalleryFiles = async (req, res) => {
   try {
+    const order = req.query.order === "oldest" ? [["createdAt", "ASC"]] : [["createdAt", "DESC"]];
     const files = await GalleryFiles.findAll({
-      where: { userId: req.userId}, order: [["uploadedAt", "DESC"]], 
+      where: { userId: req.userId}, include: [{ model: User, as: "user", attributes: ["id","username","profilephoto"] }], order
     });
     res.status(200).json(files);
   } catch (err) {
@@ -44,10 +47,11 @@ exports.getMyGalleryFiles = async (req, res) => {
       .json({ message: "Error fetching files", error: err.message });
   }
 };
-//All files of other users
+// + other users
 exports.getUserGallery = async (req, res) => {
   const username = req.params.username;
   try {
+
      const user = await User.findOne({
       where: { username },
       attributes: ["id"],
@@ -56,10 +60,13 @@ exports.getUserGallery = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: "User not found." });
     }
+    const order = req.query.order === "oldest" ? [["createdAt", "ASC"]] : [["createdAt", "DESC"]];
+
     const files = await GalleryFiles.findAll({
       where: { userId: user.id},
       attributes: ["id", "caption","path","userId"],
-      order: [["uploadedAt", "DESC"]] ,
+       include: [{ model: User, as: "user", attributes: ["id","username","profilephoto"] }],
+      order
     });
 
     res.status(200).send(files);
@@ -70,17 +77,41 @@ exports.getUserGallery = async (req, res) => {
       .send({ message: "Error fetching files", error: err.message });
   }
 };
+//for search page
+exports.searchGalleryFiles = async (req, res) => {
+  let { query } = req.query;
 
-//Deleting a file
+  if (!query || query === "*") {
+    query = "";
+  }
+
+  try {
+    const files = await GalleryFiles.findAll({
+      where: { caption: { [Op.like]: `%${query}%` } },
+      include: [{ model: User, attributes: ["id", "username", "profilephoto"] }],
+      limit: 20,
+    });
+    res.send(files);
+  } catch (err) {
+    console.error("Search gallery error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+
+//file delete
 exports.deleteFile = async (req, res) => {
   try {
-    const file = req.fileRecord;
-//deleting from system
-    if (file.path && fs.existsSync(file.path)) {
-      fs.unlinkSync(file.path);
-    }
+    const file = req.fileRecord; 
 
-    // Deleting from db
+    // delete file from filesystem
+    const fullPath = __dirname + "/../.." + file.path;
+
+if (fs.existsSync(fullPath)) {
+  fs.unlinkSync(fullPath);
+}
+
+    // delete from db
     await GalleryFiles.destroy({ where: { id: file.id } });
 
     return res.json({ message: "File was deleted successfully!" });

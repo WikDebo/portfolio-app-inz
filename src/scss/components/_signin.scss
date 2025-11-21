@@ -1,0 +1,142 @@
+@use '../util/' as u;
+@import url("https://fonts.googleapis.com/css2?family=Inder&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merienda:wght@300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  padding-block: u.rem(50) u.rem(20);
+  overflow-y: auto;
+  background-color: rgba(152, 143, 129, 0.52);
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  &__container {
+    background: var(--color-bg);
+    border: none;
+    border-radius: u.rem(10);
+    padding: u.rem(50);
+    width: min(90%, u.rem(600));
+    box-shadow: 0 0 u.rem(20) rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  h1 {
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: u.rem(24);
+  }
+
+  &__content {
+    border: none;
+    border-radius: u.rem(15);
+    background: var(--color-bg);
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: u.rem(18);
+    margin: u.rem(10) 0 u.rem(22);
+    border: none;
+    border-radius: u.rem(10);
+    outline: none;
+    background: rgba(145, 99, 8, 0.05);
+    transition: background-color 0.3s ease-in-out;
+
+    &:focus {
+      background-color: var(--color-secondary);
+    }
+  }
+
+  &__text {
+    margin-top: u.rem(10);
+    //font-size: u.rem(14);
+    text-align: center;
+
+    span {
+      color: var(--color-accent);
+      cursor: pointer;
+      transition: color 0.3s ease-in-out;
+
+      &:hover {
+        color: var(--color-highlight);
+      }
+    }
+  }
+
+  &__button {
+    width: 100%;
+    padding: u.rem(15) u.rem(25);
+    margin: u.rem(8) 0;
+    border: none;
+    border-radius: u.rem(10);
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    cursor: pointer;
+    //font-size: u.rem(15);
+    font-weight: 500;
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+      background-color: var(--color-highlight);
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: u.rem(15);
+    right: u.rem(35);
+    //font-size: u.rem(40);
+    font-weight: bold;
+    color: rgba(145, 99, 8, 0.23);
+    transition: color 0.4s ease-in-out;
+
+    &:hover,
+    &:focus {
+      color: var(--color-text);
+      cursor: pointer;
+    }
+  }
+}
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@include u.breakpoint('medium') {
+  .modal {
+    &__container {
+      padding: u.rem(30);
+      width: 90%;
+    }
+  }
+}
+
+@include u.breakpoint-down('medium') {
+  .modal {
+    &__container {
+      padding: u.rem(20);
+      width: 95%;
+    }
+  }
+}

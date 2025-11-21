@@ -22,10 +22,6 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    uploadedAt: {
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW,
-    },
   });
   return GalleryFiles;
 };

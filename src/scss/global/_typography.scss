@@ -1,0 +1,62 @@
+@use '../util/' as u;
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1;
+}
+
+h1 {
+  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(28), u.rem(36));
+  font-family: 'Merienda', cursive;
+  color: var(--color-accent);
+}
+
+h2 {
+  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(22), u.rem(24));
+  
+}
+h4 {
+  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(24), u.rem(16));
+  color: var(--color-accent);
+}
+p {
+  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(16), u.rem(18));
+  color: var(--color-text);
+  line-height: 1.6;
+  &.medium {
+    font-size: u.rem(15);
+  }
+  &.small {
+    font-size: u.rem(13);
+  }
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-text);
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+p > a {
+  color: var(--color-text);
+  text-decoration: underline;
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+.font-effect{
+  font-style: italic;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--color-accent);
+  color: transparent;
+  
+}
