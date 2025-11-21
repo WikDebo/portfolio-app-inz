@@ -14,11 +14,16 @@ router.use((req, res, next) => {
 
 // Follow / Unfollow
 router.post("/", [authJwt.verifyToken], controller.createConnection);
-router.delete("/", [authJwt.verifyToken], controller.unfollow);
+router.delete("/", [authJwt.verifyToken], controller.breakConnection);
 
 // Notifications
 router.get("/notifications", [authJwt.verifyToken, changeStatusToSeen], controller.getNotifications);
 
+router.get("/following", [authJwt.verifyToken], controller.getFollowing);
+router.get("/followers", [authJwt.verifyToken], controller.getFollowers);
+
+router.get("/following/:username", [authJwt.verifyToken], controller.getUsersFollowing);
+router.get("/followers/:username", [authJwt.verifyToken], controller.getUsersFollowers);
 // Follower stats
 router.get("/stats/:username", [authJwt.verifyToken], controller.getFollowerStats);
 

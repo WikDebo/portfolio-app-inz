@@ -1,0 +1,53 @@
+@use "../util/" as u;
+
+.search {
+  &__bar {
+    display: flex;
+    gap: u.rem(2);
+    margin-bottom: u.rem(20);
+  }
+  h2 {
+    margin-bottom: u.rem(15);
+  }
+  &__input {
+    flex: 1;
+    padding: u.rem(12) u.rem(15);
+    border-radius: u.rem(8);
+    border: u.rem(1) solid;
+    border-color: var(--color-text);
+    background-color: var(--color-header-bg);
+    outline: none;
+    width: 100%;
+    border: 1px solid hsl(60, 3%, 92%);
+    color: var(--color-text);
+    //font-size: 0.85em;
+  }
+  &__btn {
+    padding: u.rem(4) u.rem(20);
+    border-radius: u.rem(8);
+    border: 1px solid hsl(60, 3%, 92%);
+    background-color: var(--color-secondary);
+  }
+  &__tabspace {
+    display: flex;
+    gap: u.rem(8);
+  }
+  &__tab {
+    flex-shrink: 0;
+    padding: u.rem(10) u.rem(20);
+    border: none;
+      background: transparent;
+    cursor: pointer;
+    border-bottom: u.rem(2) solid transparent;
+    font-weight: normal;
+    color: var(--color-text);}
+
+  &__tab.active{
+  border-bottom:u.rem(2) solid var(--color-accent);
+  font-weight: bold;
+  color: var(--color-accent);
+  }
+  &__info{
+    margin-top: u.rem(20);
+  }
+}

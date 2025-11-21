@@ -3,7 +3,7 @@ const Likes = db.likes;
 const GalleryFiles = db.galleryFiles;
 const User = db.users;
 
-// Like a file
+// like a gallery file
 exports.likeFile = async (req, res) => {
   try {
     const userId = req.userId;
@@ -11,19 +11,25 @@ exports.likeFile = async (req, res) => {
 
     if (!fileId) return res.status(400).send({ message: "fileId is required" });
 
-    const existingLike = await Likes.findOne({ where: { userId, fileId } });
-    if (existingLike) {
+    const alreadyLiked = await Likes.findOne({ where: { userId, fileId } });
+    if (alreadyLiked) {
       return res.status(400).send({ message: "You already liked this file." });
     }
 
-    await Likes.create({ userId, fileId, likedAt: new Date(), status: "new" });
+    await Likes.create({
+      userId,
+      fileId,
+      likedAt: new Date(),
+      status: "new"
+    });
+
     res.status(201).send({ message: "File liked successfully!" });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
 
-// Unlike a file
+// unlike a gallery file
 exports.unlikeFile = async (req, res) => {
   try {
     const userId = req.userId;
@@ -32,17 +38,16 @@ exports.unlikeFile = async (req, res) => {
     if (!fileId) return res.status(400).send({ message: "fileId is required" });
 
     const deleted = await Likes.destroy({ where: { userId, fileId } });
-    if (deleted) {
-      res.send({ message: "File unliked successfully." });
-    } else {
-      res.status(404).send({ message: "Like not found." });
-    }
+
+    if (!deleted) return res.status(404).send({ message: "Like not found." });
+
+    res.send({ message: "File unliked successfully." });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
 
-// Get all likes of a file
+// all likes for a file
 exports.getFileLikes = async (req, res) => {
   try {
     const fileId = req.params.fileId;
@@ -53,10 +58,10 @@ exports.getFileLikes = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "profilephoto"],
-        },
+          attributes: ["id", "username", "profilephoto"]
+        }
       ],
-      order: [["likedAt", "DESC"]],
+      order: [["likedAt", "DESC"]]
     });
 
     res.send(likes);
@@ -65,52 +70,55 @@ exports.getFileLikes = async (req, res) => {
   }
 };
 
-//Is liked by user
+
+// check if the current user liked a file
 exports.checkLikeStatus = async (req, res) => {
   try {
-    const userId = req.userId;
-    const fileId = req.params.fileId;
+    const exists = await Likes.findOne({
+      where: { userId: req.userId, fileId: req.params.fileId }
+    });
 
-    const exists = await Likes.findOne({ where: { userId, fileId } });
     res.send({ isLiked: !!exists });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
-//all likes of a photo
+//all the likes
 exports.getLikeCount = async (req, res) => {
   try {
-    const fileId = req.params.fileId;
-
     const count = await Likes.count({
-      where: { fileId },
+      where: {
+        fileId: req.params.fileId,
+        status: ["new", "seen"]
+      }
     });
 
-    res.send({ fileId, likeCount: count });
+    res.send({ fileId: req.params.fileId, likeCount: count });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
-//mark as seen
+//not used
 exports.getLikeNotifications = async (req, res) => {
   try {
-    //const userId = req.userId;
+    const userId = req.userId;
+
     const newLikes = await Likes.findAll({
       where: { status: "new" },
       include: [
         {
           model: User,
-          as: "user", // must match
-          attributes: ["id", "username", "profilephoto"],
+          as: "user",
+          attributes: ["id", "username", "profilephoto"]
         },
         {
           model: GalleryFiles,
-          as: "file", // must match
+          as: "file",
           attributes: ["id", "fileName", "path", "userId"],
-          where: { userId: req.userId },
-        },
+          where: { userId }
+        }
       ],
-      order: [["likedAt", "DESC"]],
+      order: [["likedAt", "DESC"]]
     });
 
     res.send(newLikes);
@@ -119,29 +127,30 @@ exports.getLikeNotifications = async (req, res) => {
   }
 };
 
-// Get all liked files of a user
+//all that user liked
 exports.getUserLikes = async (req, res) => {
-  const username = req.params.username;
   try {
-    // 1. Get the user by ID (e.g. from token)
+    const username = req.params.username;
+
     const user = await User.findOne({
       where: { username },
-      attributes: ["id"],
+      attributes: ["id"]
     });
 
     if (!user) {
       return res.status(404).send({ message: "User not found." });
     }
+
     const likedFiles = await Likes.findAll({
       where: { userId: user.id },
       include: [
         {
           model: GalleryFiles,
-          attributes: ["id", "path", "caption"],
           as: "file",
-        },
+          attributes: ["id", "path", "caption"]
+        }
       ],
-      order: [["likedAt", "DESC"]],
+      order: [["likedAt", "DESC"]]
     });
 
     res.send(likedFiles);
@@ -149,3 +158,4 @@ exports.getUserLikes = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+

@@ -3,42 +3,51 @@ const bcrypt = require("bcryptjs");
 const User = db.users;
 const fs = require("fs");
 const path = require("path");
+const { Op } = require("sequelize");
 
 exports.updateProfile = async (req, res) => {
   const userId = req.userId;
   const updatedData = {};
+
   try {
-    if (req.body.username) updatedData.username = req.body.username;
-    if (req.body.email) updatedData.email = req.body.email;
-    if ("usertitle" in req.body)
-      updatedData.usertitle = req.body.usertitle || null;
-    if ("bio" in req.body) updatedData.bio = req.body.bio || null;
-    if (req.file) {
-      const user = await User.findByPk(userId);
-      // Delete old profile picture if exists
-      if (user && user.profilephoto) {
-        const oldPath = path.join(
-          __basedir,
-          "/resources/static/assets/uploads/",
-          user.profilephoto
-        );
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    if (req.body.username) {
+      const existing = await User.findOne({
+        where: {
+          username: req.body.username,
+          id: { [Op.ne]: userId }
+        }
+      });
+
+      if (existing) {
+        return res.status(400).send({ message: "Username is already taken." });
       }
 
+      updatedData.username = req.body.username;
+    }
+
+    if (req.body.email) updatedData.email = req.body.email;
+    if ("usertitle" in req.body) updatedData.usertitle = req.body.usertitle || null;
+    if ("bio" in req.body) updatedData.bio = req.body.bio || null;
+
+    if (req.file) {
+      const user = await User.findByPk(userId);
+      if (user && user.profilephoto) {
+        const oldPath = path.join(__basedir, "/resources/static/assets/uploads/", user.profilephoto);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
       updatedData.profilephoto = req.file.filename;
     }
-    const [affectedRows] = await User.update(updatedData, {
-      where: { id: userId },
-    });
+
+    const [affectedRows] = await User.update(updatedData, { where: { id: userId } });
 
     if (affectedRows === 1) {
       const updatedUser = await User.findByPk(userId, {
-        attributes: { exclude: ["password"] },
+        attributes: { exclude: ["password"] }
       });
-      res.send({ message: "Profile updated successfully.", user: updatedUser });
-    } else {
-      res.send({ message: "Cannot update profile." });
+      return res.send({ message: "Profile updated successfully.", user: updatedUser });
     }
+
+    res.send({ message: "Cannot update profile." });
   } catch (err) {
     res.status(500).send({ message: "Error updating profile: " + err.message });
   }
@@ -50,32 +59,25 @@ exports.changePassword = async (req, res) => {
     if (!user) return res.status(404).send({ message: "User not found" });
 
     const valid = bcrypt.compareSync(oldPassword, user.password);
-    if (!valid)
-      return res.status(400).send({ message: "Incorrect current password" });
+    if (!valid) return res.status(400).send({ message: "Incorrect current password" });
 
     user.password = bcrypt.hashSync(newPassword, 8);
     await user.save();
     res.send({ message: "Password updated successfully" });
   } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Error updating password: " + err.message });
+    res.status(500).send({ message: "Error updating password: " + err.message });
   }
 };
-exports.getMyProfile = async (req, res) => {
+exports.getMyProfile = async(req, res) => {
   try {
-    const currentUser = await User.findByPk(req.userId, {
-      attributes: { exclude: ["password"] },
-    });
+     const currentUser = await User.findByPk(req.userId, { attributes: { exclude: ["password"] } });
 
     if (!currentUser) {
       return res.status(404).send({ message: "User not found" });
     }
     res.send(currentUser);
   } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Error retrieving profile: " + err.message });
+    res.status(500).send({ message: "Error retrieving profile: " + err.message });
   }
 };
 exports.getUser = async (req, res) => {
@@ -83,7 +85,7 @@ exports.getUser = async (req, res) => {
   try {
     const user = await User.findOne({
       where: { username: username },
-      attributes: { exclude: ["password"] },
+      attributes: { exclude: ["password"] }, 
     });
 
     if (!user) {
@@ -92,72 +94,84 @@ exports.getUser = async (req, res) => {
 
     res.send(user);
   } catch (err) {
-    res
-      .status(500)
-      .send({
-        message:
-          err.message || "Some error occurred while retrieving the user.",
-      });
+    res.status(500).send({ message: err.message || "Some error occurred while retrieving the user." });
+  }
+};
+exports.searchUsers = async (req, res) => {
+  let { query } = req.query;
+
+  if (!query || query === "*") {
+    query = "";    // empty to match everything might change
+  }
+
+  try {
+    const users = await User.findAll({
+      where: { username: { [Op.like]: `%${query}%` } },
+      attributes: ["id", "username", "profilephoto"],
+      limit: 20,
+    });
+    res.send(users);
+  } catch (err) {
+    console.error("Search users error:", err);
+    res.status(500).send({ message: err.message });
   }
 };
 
 exports.deleteProfilePhoto = async (req, res) => {
   const userId = req.userId;
+
   try {
     const user = await User.findByPk(userId);
+    //delete profile
     if (user && user.profilephoto) {
-      const oldPath = path.join(
-        __basedir,
-        "/resources/static/assets/uploads/",
-        user.profilephoto
-      );
+      const oldPath = path.join(__basedir, "/resources/static/assets/uploads/", user.profilephoto);
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }
 
-    const [affectedRows] = await User.update(
-      { profilephoto: null },
-      { where: { id: userId } }
-    );
+    // add null to profilephoto
+    await User.update({ profilephoto: null }, { where: { id: userId } });
 
-    if (affectedRows === 1) {
-      res.send({ message: "Profile was updated successfully." });
-    } else {
-      res.send({ message: "Cannot update profile." });
-    }
+    //return updated user
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ["password"] }
+    });
+
+    return res.send({
+      message: "Profile photo deleted successfully.",
+      user: updatedUser
+    });
+
   } catch (err) {
-    res.status(500).send({ message: "Error updating profile: " + err.message });
+    res.status(500).send({ message: "Error deleting profile photo: " + err.message });
   }
 };
 
-exports.deleteAccount = async (req, res) => {
-  const userId = req.userId;
-  const targetUserId = req.params.id;
-
+exports.deleteMyAccount = async (req, res) => {
   try {
-    const currentUser = await User.findByPk(userId);
-    if (!currentUser) {
-      return res.status(404).send({ message: "Current user not found" });
-    }
+    const userId = req.userId;
 
-    const condition =
-      currentUser.role === "admin"
-        ? { id: targetUserId }
-        : { id: targetUserId, id: userId };
+    const deleted = await User.destroy({ where: { id: userId } });
 
-    const userDeleted = await User.destroy({ where: condition });
+    if (!deleted) return res.status(404).send({ message: "User not found." });
 
-    if (userDeleted === 1) {
-      return res.send({ message: "Account was deleted successfully!" });
-    } else {
-      return res
-        .status(403)
-        .send({
-          message: "Not authorized to delete this account or user not found",
-        });
-    }
+    res.send({ message: "Your account has been deleted." });
+
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Could not delete the account: " + err.message });
+    res.status(500).send({ message: "Error deleting account: " + err.message });
+  }
+};
+//not used
+exports.adminDeleteAccount = async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+
+    const deleted = await User.destroy({ where: { id: targetUserId } });
+
+    if (!deleted) return res.status(404).send({ message: "User not found." });
+
+    res.send({ message: "Account deleted by admin." });
+
+  } catch (err) {
+    res.status(500).send({ message: "Error deleting account: " + err.message });
   }
 };

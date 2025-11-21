@@ -1,16 +1,17 @@
-import axios from "axios";
-import authHeader from "./auth-header";
+import api from "./api";
 
-const API_URL = "http://localhost:8080/api/test/";
+class UserService {
+  getPublicContent() {
+    return api.get('/test/all');
+  }
 
-export const getPublicContent = () => {
-  return axios.get(API_URL + "all");
-};
+  getUserBoard() {
+    return api.get('/test/user');
+  }
 
-export const getUserBoard = () => {
-  return axios.get(API_URL + "user", { headers: authHeader() });
-};
+  getAdminBoard() {
+    return api.get('/test/admin');
+  }
+}
 
-export const getAdminBoard = () => {
-  return axios.get(API_URL + "admin", { headers: authHeader() });
-};
+export default new UserService();

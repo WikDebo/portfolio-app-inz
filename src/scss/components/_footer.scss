@@ -1,0 +1,78 @@
+@use "../util/" as u;
+
+.footer {
+ background: var(--color-bg);
+  text-align: center;
+  display: grid;
+
+
+  /* ROW 1 — left + right */
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // two columns
+    align-items: start;
+    gap: u.rem(100);
+    justify-content: center;
+     align-items: center;
+    justify-self: center;
+    //margin-top: u.rem(10);
+    padding-top: u.rem(20);
+    border: 1px solid hsl(60, 3%, 92%);
+    color: var(--color-text);
+    //font-size: 0.85em;
+    width: 100%;
+  }
+
+  /* LEFT COLUMN */
+  &__left {
+    display: flex;
+    justify-content: flex-end;
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      flex-direction: column;  
+      gap: 0;  // stack items vertically
+      margin: 0;
+      padding: 0;
+      line-clamp: calc(23);
+
+      h1 {
+        color: var(--color-text);
+        line-height: 0.98;
+        margin: 0;
+      }
+    }
+  }
+
+  /* RIGHT COLUMN */
+  &__right {
+    display: flex;
+    justify-content: flex-start;
+
+    .col {
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: u.rem(6);
+        align-items: baseline;
+        a {
+          color: var(--color-text);
+          text-decoration: none;
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
+  /* BOTTOM COPYRIGHT ROW */
+  &__bottom {
+    margin-top: u.rem(10);
+    padding-top: u.rem(10);
+    color: var(--color-text);
+    //font-size: 0.85em;
+  }
+}

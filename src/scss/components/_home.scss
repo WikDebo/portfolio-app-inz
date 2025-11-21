@@ -1,0 +1,55 @@
+@use "../util/" as u;
+
+.home {
+  //display: flexbox;
+  align-items: center;
+  gap: u.rem(160);
+  width: inherit;
+  inset-inline-start: 25%;
+
+  &__main {
+    margin-bottom: u.rem(50);
+  }
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    ul {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      // li {
+      //   display: block; /* let links fill the list item */
+      //   padding: 8px 12px;
+      //   text-decoration: none;
+      //   border: 1px solid gray;
+      //   color: black;
+      //   margin: 0 4px;
+      //   border-radius: 5px; /* add rounded borders */
+      // }
+    
+    button {
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      color: #000;
+      cursor: pointer;
+    }
+  }
+  }
+}
+
+em {
+  font-style: normal;
+  background: var(--color-highlight);
+}
+ 
+

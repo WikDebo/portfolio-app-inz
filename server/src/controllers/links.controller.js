@@ -29,9 +29,7 @@ exports.getUserLinks = async (req, res) => {
 
     res.send(links);
   } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Error retrieving user links: " + err.message });
+    res.status(500).send({ message: "Error retrieving user links: " + err.message });
   }
 };
 

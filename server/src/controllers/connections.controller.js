@@ -2,6 +2,7 @@ const db = require("../models");
 const User = db.users;
 const Connections = db.connections;
 
+// clicking the following btn 
 exports.createConnection = async (req, res) => {
   try {
     const followerId = req.userId;
@@ -32,8 +33,8 @@ exports.createConnection = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-
-exports.unfollow = async (req, res) => {
+// clicking unfollow btn
+exports.breakConnection = async (req, res) => {
   try {
     const followerId = req.userId;
     const {username} = req.body;
@@ -63,7 +64,91 @@ exports.unfollow = async (req, res) => {
     res.status(500).send({ message: "Error while unfollowing: " + err.message });
   }
 };
+//shows users following + followers (in following / following page)
+exports.getFollowing = async (req, res) => {
+  const userId = req.userId;
+  const following = await Connections.findAll({
+    where: { followerId: userId },
+    include: [
+      {
+        model: User,
+        as: "FollowingUser",
+        attributes: ["id", "username", "profilephoto"],
+      },
+    ],
+  });
+  res.send(following);
+};
+exports.getFollowers = async (req, res) => {
+  const userId = req.userId;
+  const followers = await Connections.findAll({
+    where: { followingId: userId },
+    include: [
+      {
+        model: User,
+        as: "FollowerUser",
+        attributes: ["id", "username", "profilephoto"],
+      },
+    ],
+  });
+  res.send(followers);
+};
+//same for non logged in users
+exports.getUsersFollowing = async (req, res) => {
+   const username = req.params.username;
+  try {
+      const user = await User.findOne({ 
+      where: { username },
+      attributes: ["id"], 
+    });
 
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+
+  const following = await Connections.findAll({
+    where: { followerId: user.id },
+    include: [
+      {
+        model: User,
+        as: "FollowingUser",
+        attributes: ["id", "username", "profilephoto"],
+      },
+    ],
+  });
+  res.send(following);
+  } catch (err) {
+    res.status(500).send({ message: "Error retrieving stats: " + err.message });
+  }
+};
+exports.getUsersFollowers = async (req, res) => {
+   const username = req.params.username;
+  try {
+      const user = await User.findOne({ 
+      where: { username },
+      attributes: ["id"], 
+    });
+
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+      
+  const followers = await Connections.findAll({
+    where: { followingId: user.id },
+    include: [
+      {
+        model: User,
+        as: "FollowerUser",
+        attributes: ["id", "username", "profilephoto"],
+      },
+    ],
+  });
+  res.send(followers);
+  } catch (err) {
+    res.status(500).send({ message: "Error retrieving stats: " + err.message });
+  }
+};
+// not used in app
 exports.getNotifications = async (req, res) => {
   try {
     const followingId = req.userId;
@@ -85,7 +170,7 @@ exports.getNotifications = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-
+//how many followers / following
 exports.getFollowerStats = async (req, res) => {
   const username = req.params.username;
   try {
@@ -98,7 +183,7 @@ exports.getFollowerStats = async (req, res) => {
         return res.status(404).send({ message: "User not found." });
       }
 
-    // Count followers and following
+    // count followers + following
     const followersCount = await Connections.count({ where: { followingId: user.id } });
     const followingCount = await Connections.count({ where: { followerId: user.id } });
 
@@ -110,7 +195,7 @@ exports.getFollowerStats = async (req, res) => {
     res.status(500).send({ message: "Error retrieving stats: " + err.message });
   }
 };
-
+//changed btn to follow/unfollow
 exports.checkFollowStatus = async (req, res) => {
   try {
     const followerId = req.userId;

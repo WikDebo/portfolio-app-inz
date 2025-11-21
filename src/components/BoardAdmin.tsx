@@ -1,40 +1,33 @@
-import React, { useState, useEffect } from "react";
-
-import { getAdminBoard } from "../services/user.service";
+import React, { useEffect, useState } from "react";
+import AuthService from "../services/auth.service.ts";
 import EventBus from "../common/EventBus";
 
 const BoardAdmin: React.FC = () => {
-  const [content, setContent] = useState<string>("");
+  const [user, setUser] = useState(AuthService.getCurrentUser());
 
   useEffect(() => {
-    getAdminBoard().then(
-      (response) => {
-        setContent(response.data);
-      },
-      (error) => {
-        const _content =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
+    if (!user || !user.roles?.includes("ROLE_ADMIN")) {
+      window.location.href = "/login";
+    }
+  }, [user]);
 
-        setContent(_content);
+  useEffect(() => {
+    const forcedLogout = () => {
+      AuthService.logout();
+      setUser(null);
+      window.location.href = "/login";
+    };
 
-        if (error.response && error.response.status === 401) {
-          EventBus.dispatch("logout");
-        }
-      }
-    );
+    EventBus.on("logout", forcedLogout);
+
+    return () => {
+      EventBus.remove("logout", forcedLogout);
+    };
   }, []);
 
-  return (
-    <div className="container">
-      <header className="jumbotron">
-        <h3>{content}</h3>
-      </header>
-    </div>
-  );
+  if (!user) return null;
+
+  return <div>Admin Board - Welcome {user.username}</div>;
 };
 
 export default BoardAdmin;

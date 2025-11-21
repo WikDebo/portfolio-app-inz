@@ -1,118 +1,203 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
-
-import * as AuthService from "./services/auth.service";
-import type { IUser } from "./types/user.type";
-
-import Login from "./components/Login";
-import Register from "./components/Register";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import Profile from "./components/Profile";
-import BoardUser from "./components/BoardUser";
+import Following from "./components/Following";
+import PrivateRoutes from "./components/PrivateRoutes";
+import Settings from "./components/Settings";
 import BoardAdmin from "./components/BoardAdmin";
-
-import EventBus from "./common/EventBus";
+import Profile from "./components/Profile";
+import Gallery from "./components/Gallery";
+import Portfolio from "./components/Portfolio";
+import ProfileEdit from "./components/ProfileEdit";
+import SearchPage from "./components/Search";
+import CategoryPage from "./components/CategoryPage";
+import PortfolioEditPage from "./components/PortfolioEditPage";
+import CategoryEditPage from "./components/CategoryEditPage";
 
 const App: React.FC = () => {
-  const [showAdminBoard, setShowAdminBoard] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-
-  useEffect(() => {
-    const user = AuthService.getCurrentUser();
-
-    if (user) {
-      setCurrentUser(user);
-      setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
-    }
-
-    EventBus.on("logout", logOut);
-
-    return () => {
-      EventBus.remove("logout", logOut);
-    };
-  }, []);
-
-  const logOut = () => {
-    AuthService.logout();
-    setShowAdminBoard(false);
-    setCurrentUser(undefined);
-  };
-
   return (
-    <div>
-      <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/"} className="navbar-brand">
-          bezKoder
-        </Link>
-        <div className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <Link to={"/home"} className="nav-link">
-              Home
-            </Link>
-          </li>
-
-          {showAdminBoard && (
-            <li className="nav-item">
-              <Link to={"/admin"} className="nav-link">
-                Admin Board
-              </Link>
-            </li>
-          )}
-
-          {currentUser && (
-            <li className="nav-item">
-              <Link to={"/user"} className="nav-link">
-                User
-              </Link>
-            </li>
-          )}
-        </div>
-
-        {currentUser ? (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/profile"} className="nav-link">
-                {currentUser.username}
-              </Link>
-            </li>
-            <li className="nav-item">
-              <a href="/login" className="nav-link" onClick={logOut}>
-                LogOut
-              </a>
-            </li>
-          </div>
-        ) : (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/login"} className="nav-link">
-                Login
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to={"/register"} className="nav-link">
-                Sign Up
-              </Link>
-            </li>
-          </div>
-        )}
-      </nav>
-
-      <div className="container mt-3">
+    <Router>
+      <Navbar />
+      <main>
         <Routes>
+          {/* Main Rotues */}
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/user" element={<BoardUser />} />
-          <Route path="/admin" element={<BoardAdmin />} />
+
+          <Route
+            path="/search"
+            element={
+              <PrivateRoutes>
+                <SearchPage />
+              </PrivateRoutes>
+            }
+          />
+
+          <Route
+            path="/following"
+            element={
+              <PrivateRoutes>
+                <Following />
+              </PrivateRoutes>
+            }
+          />
+          {/* Profile */}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoutes>
+                <Profile />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile/:username"
+            element={
+              <PrivateRoutes>
+                <Profile />
+              </PrivateRoutes>
+            }
+          />
+          {/* Profile Edit */}
+          <Route
+            path="/profile/edit"
+            element={
+              <PrivateRoutes>
+                <ProfileEdit />
+              </PrivateRoutes>
+            }
+          />
+          {/* Portfolio */}
+          <Route
+            path="/profile/portfolio"
+            element={
+              <PrivateRoutes>
+                <Portfolio />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile/:username/portfolio"
+            element={
+              <PrivateRoutes>
+                <Portfolio />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Portfolio Edit */}
+          <Route
+            path="/profile/portfolio/edit"
+            element={
+              <PrivateRoutes>
+                <PortfolioEditPage />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Category */}
+          <Route
+            path="/profile/portfolio/category/:categoryId"
+            element={
+              <PrivateRoutes>
+                <CategoryPage />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile/:username/portfolio/category/:categoryId"
+            element={
+              <PrivateRoutes>
+                <CategoryPage />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Category Edit */}
+          <Route
+            path="/profile/portfolio/category/:categoryId/edit"
+            element={
+              <PrivateRoutes>
+                <CategoryEditPage />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Gallery */}
+          <Route
+            path="/profile/gallery"
+            element={
+              <PrivateRoutes>
+                <Gallery />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile/:username/gallery"
+            element={
+              <PrivateRoutes>
+                <Gallery />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Settings */}
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoutes>
+                <Settings />
+              </PrivateRoutes>
+            }
+          />
+
+          {/* Admin */}
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoutes roles={["ROLE_ADMIN"]}>
+                <BoardAdmin />
+              </PrivateRoutes>
+            }
+          />
         </Routes>
-      </div>
-    </div>
+      </main>
+      <footer className="footer">
+        <div className="footer__top">
+          <div className="footer__left">
+            <div className="col">
+              <h1 style={{ color: "var(--color-text)" }}>Artfolio</h1>
+              <h1 style={{ color: "var(--color-dark-1)" }}>Artfolio</h1>
+              <h1 style={{ color: "var(--color-dark-2)" }}>Artfolio</h1>
+              <h1 style={{ color: "var(--color-dark-3)" }}>Artfolio</h1>
+              <h1 style={{ color: "var(--color-dark-4)" }}>Artfolio</h1>
+            </div>
+          </div>
+          <div className="footer__right">
+            <div className="col">
+              <ul>
+                <li>
+                  <a>Contact us</a>
+                </li>
+                <li>
+                  <a>Our Services</a>
+                </li>
+                <li>
+                  <a>Privacy Policy</a>
+                </li>
+                <li>
+                  <a>Terms & Conditions</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="footer__bottom">
+          WIKTORIA © 2025 — All rights reserved
+        </div>
+      </footer>
+    </Router>
   );
 };
+
 export default App;

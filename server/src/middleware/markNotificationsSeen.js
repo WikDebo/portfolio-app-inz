@@ -1,3 +1,4 @@
+//not used
 const db = require("../models");
 const Connections = db.connections;
 

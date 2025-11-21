@@ -3,25 +3,7 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.users;
 
-verifyToken = (req, res, next) => {
-    let token = req.headers["x-access-token"];
-
-    if (!token) {
-        return res.status(403).send({
-            message: "No token provided!"
-        });
-    }
-
-    jwt.verify(token,config.secret,(err, decoded) => {
-        if(err){
-            return res.status(401).send({
-                message: "Unathorized.",
-            });
-        }req.userId = decoded.id;
-        next();
-    });
-    const { TokenExpiredError } = jwt;
-    
+const { TokenExpiredError } = jwt;
 
 const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
@@ -30,9 +12,24 @@ const catchError = (err, res) => {
 
   return res.sendStatus(401).send({ message: "Unauthorized!" });
 }
+
+const verifyToken = (req, res, next) => {
+  let token = req.headers["x-access-token"];
+
+  if (!token) {
+    return res.status(403).send({ message: "No token provided!" });
+  }
+
+  jwt.verify(token, config.secret, (err, decoded) => {
+    if (err) {
+      return catchError(err, res);
+    }
+    req.userId = decoded.id;
+    next();
+  });
 };
 
-isAdmin = (req, res, next) => {
+const isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
       for (let i = 0; i < roles.length; i++) {
@@ -51,7 +48,7 @@ isAdmin = (req, res, next) => {
 };
 
 const authJwt = {
-    verifyToken: verifyToken,
-    isAdmin: isAdmin
+  verifyToken: verifyToken,
+  isAdmin: isAdmin,
 };
 module.exports = authJwt;

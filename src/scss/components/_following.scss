@@ -1,0 +1,49 @@
+@use '../util/' as u;
+.following {
+  &__line {
+    display: flex;
+    flex-direction: row;
+    gap: u.rem(10);
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+    top: 0;         
+    background: transparent;  // better visibility than transparent
+    z-index: 100;      
+
+    &-space {
+      flex-shrink: 0;
+      width: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center; // ensures username is centered
+    }
+
+    .feed__profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none; // remove underline from Link
+
+      img.feed__profile-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: u.rem(0); // space between image and username
+      }
+
+      p {
+        //font-size: u.rem(15); // small username
+        color: var(--color-text);
+        margin: 0;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+      }
+    }
+  }
+}
