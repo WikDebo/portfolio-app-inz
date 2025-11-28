@@ -1,0 +1,94 @@
+@use "../util/" as u;
+
+.settings {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-radius: u.rem(5);
+  padding: u.rem(40);
+  border: u.rem(1) solid var(--color-border);
+  min-height: max-content;
+  &__all {
+    padding: u.rem(20) u.rem(50);
+  }
+  &__section {
+    margin-top: u.rem(15);
+    margin-bottom: u.rem(15);
+
+    form {
+      padding-top: u.rem(20);
+    }
+
+    .settings__input {
+      flex: 1;
+      padding: u.rem(12) u.rem(15);
+      border-radius: u.rem(8);
+      border: u.rem(1) solid;
+      border-color: var(--color-text);
+      background-color: var(--color-header-bg);
+      outline: none;
+      min-width: fit-content;
+      width: 100%;
+      border: u.rem(1) solid var(--color-border);
+      color: var(--color-text);
+    }
+    .save-btn {
+      width: 100%;
+      margin-bottom: u.rem(5);
+      padding: u.rem(15) u.rem(20);
+      background: var(--color-highlight);
+      color: var(--color-text);
+      border: none;
+      border-radius: u.rem(10);
+      cursor: pointer;
+      transition: background-color 150ms ease-in-out;
+      &:hover {
+        background-color: var(--color-secondary);
+      }
+      &:active {
+        background: var(--color-secondary);
+      }
+    }
+    .toggle__button {
+      margin: u.rem(15);
+      border: u.rem(3) solid var(--color-text);
+      background-color: var(--color-bg);
+      border-radius: u.rem(30);
+      width: u.rem(60);
+      height: u.rem(30);
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.5s, border-color 0.5s;
+    }
+    .toggle__circle {
+      background-color: var(--color-text);
+      border-radius: 50%;
+      width: u.rem(20);
+      height: u.rem(20);
+      position: absolute;
+      top: u.rem(2);
+      left: u.rem(2);
+      transition: left 0.5s;
+    }
+    .toggle__button.active {
+      background-color: var(--color-bg);
+      border-color: var(--color-text);
+    }
+    .toggle__button.active .toggle__circle {
+      left: u.rem(32);
+      background-color: var(--color-text);
+    }
+  }
+  @include u.breakpoint-down("large") {
+    &__all {
+    padding: u.rem(10);
+  }
+  }
+
+  @include u.breakpoint-down("medium") {
+   &__all {
+    padding: 0;
+  }
+  }
+}

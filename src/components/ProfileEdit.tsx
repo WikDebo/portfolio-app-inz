@@ -19,7 +19,7 @@ const ProfileEditing: React.FC = () => {
   const { currentUser, setCurrentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<IUser | null>(null);
-  const [preview, setPreview] = useState<string>("/silly-seal.gif");
+  const [preview, setPreview] = useState<string>("/preview.png");
   const [file, setFile] = useState<File | null>(null);
   const [links, setLinks] = useState<IUserLink[]>([]);
   const [newLink, setNewLink] = useState("");
@@ -38,7 +38,7 @@ const ProfileEditing: React.FC = () => {
         setPreview(
           data.profilephoto
             ? `http://localhost:8080/uploads/${data.profilephoto}`
-            : "/silly-seal.gif"
+            : "/preview.png"
         );
 
         const linksResp = await LinksService.getMyLinks();
@@ -67,7 +67,7 @@ const ProfileEditing: React.FC = () => {
     try {
       await ProfileService.deleteProfilePhoto();
       setFile(null);
-      setPreview("/silly-seal.gif");
+      setPreview("/preview.png");
       setSuccessMsg("Profile photo removed successfully.");
 
       if (currentUser)
@@ -121,242 +121,288 @@ const ProfileEditing: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Loading profile settings…</p>;
+  if (loading)
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="40"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.4"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="100"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.2"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="160"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="0"
+          ></animate>
+        </circle>
+      </svg>
+    );
 
   return (
     <div className="profile">
-      <div className="profile__all">
-        {errorMsg && <div className="error-msg">{errorMsg}</div>}
-        {successMsg && <div className="success-msg">{successMsg}</div>}
-        <Formik
-          enableReinitialize
-          initialValues={{
-            username: user?.username ?? "",
-            email: user?.email ?? "",
-            usertitle: user?.usertitle ?? "",
-            bio: user?.bio ?? "",
-            profilephoto: null as File | null,
-          }}
-          validationSchema={Yup.object({
-            username: Yup.string()
-              .max(50, "Max 50 characters")
-              .required("Username is required"),
-            usertitle: Yup.string().max(50, "Max 50 characters"),
-            bio: Yup.string().max(10000, "Max 10000 characters"),
-          })}
-          onSubmit={async (values, { setSubmitting }) => {
-            setErrorMsg(null);
-            setSuccessMsg(null);
-            {
-              /* user info section*/
-            }
-            try {
-              const form = new FormData();
-              form.append("username", values.username);
-              form.append("usertitle", values.usertitle);
-              form.append("bio", values.bio);
-              if (file) form.append("profilephoto", file);
+      <aside className="page-content">
+        <div className="profile__all">
+          {errorMsg && <div className="error-msg">{errorMsg}</div>}
+          {successMsg && <div className="success-msg">{successMsg}</div>}
+          <Formik
+            enableReinitialize
+            initialValues={{
+              username: user?.username ?? "",
+              email: user?.email ?? "",
+              usertitle: user?.usertitle ?? "",
+              bio: user?.bio ?? "",
+              profilephoto: null as File | null,
+            }}
+            validationSchema={Yup.object({
+              username: Yup.string()
+                .max(50, "Max 50 characters")
+                .required("Username is required"),
+              usertitle: Yup.string().max(50, "Max 50 characters"),
+              bio: Yup.string().max(10000, "Max 10000 characters"),
+            })}
+            onSubmit={async (values, { setSubmitting }) => {
+              setErrorMsg(null);
+              setSuccessMsg(null);
 
-              const resp = await ProfileService.updateProfile(form);
-              const updatedUser = resp.data.user;
+              try {
+                const form = new FormData();
+                form.append("username", values.username);
+                form.append("usertitle", values.usertitle);
+                form.append("bio", values.bio);
+                if (file) form.append("profilephoto", file);
 
-              const updatedStoredUser = AuthService.updateStoredUser({
-                username: updatedUser.username,
-                usertitle: updatedUser.usertitle,
-                bio: updatedUser.bio,
-                profilephoto: updatedUser.profilephoto,
-              });
+                const resp = await ProfileService.updateProfile(form);
+                const updatedUser = resp.data.user;
 
-              setCurrentUser(updatedStoredUser);
+                const updatedStoredUser = AuthService.updateStoredUser({
+                  username: updatedUser.username,
+                  usertitle: updatedUser.usertitle,
+                  bio: updatedUser.bio,
+                  profilephoto: updatedUser.profilephoto,
+                });
 
-              setSuccessMsg("Profile updated successfully!");
-              navigate("/profile");
-            } catch (err: any) {
-              if (
-                err.response?.data?.message === "Username is already taken."
-              ) {
-                setErrorMsg("That username is already taken.");
-              } else {
-                setErrorMsg("Failed to update profile.");
+                setCurrentUser(updatedStoredUser);
+
+                setSuccessMsg("Profile updated successfully!");
+                navigate("/profile");
+              } catch (err: any) {
+                if (
+                  err.response?.data?.message === "Username is already taken."
+                ) {
+                  setErrorMsg("That username is already taken.");
+                } else {
+                  setErrorMsg("Failed to update profile.");
+                }
+              } finally {
+                setSubmitting(false);
               }
-            } finally {
-              setSubmitting(false);
-            }
-          }}
-        >
-          {({ isSubmitting, setFieldValue }) => (
-            <Form>
-              {/* user info section*/}
-              <header className="profile__wrapper">
-                <div className="profile__wrapper__info">
-                  <h2 className="profile-name">
-                    <Field
-                      className="text__input"
-                      name="username"
-                      type="text"
-                      placeholder="Username"
-                    />
-                    <ErrorMessage
-                      name="username"
-                      component="div"
-                      className="modal__error"
-                    />
-                  </h2>
-                  <h4 className="email">{user?.email}</h4>
-
-                  <p className="profile-title">
-                    <Field
-                      className="text__input"
-                      name="usertitle"
-                      type="text"
-                      placeholder="Your title"
-                    />
-                    <ErrorMessage
-                      name="usertitle"
-                      component="div"
-                      className="modal__error"
-                    />
-                  </p>
-                  {/* user photo section*/}
-                  <div className="profile__wrapper__avatar">
-                    <img
-                      className="profile__wrapper__avatar-img"
-                      src={preview || "/silly-seal.gif"}
-                      alt="Profile Preview"
-                    />
-                  </div>
-                  <input
-                    className="add-btn_picture"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => onFileChange(e, setFieldValue)}
-                  />
-                  {preview && preview !== "/silly-seal.gif" && (
-                    <button
-                      className="save-btn"
-                      type="button"
-                      onClick={handleRemovePhoto}
-                      disabled={isSubmitting}
-                    >
-                      Remove Photo
-                    </button>
-                  )}
-                  {/* user link section*/}
-                  <div className="profile-links">
-                    <p>You can also follow me on:</p>
-                    <div className="link-list">
-                      <input
+            }}
+          >
+            {({ isSubmitting, setFieldValue }) => (
+              <Form>
+                <header className="profile__wrapper">
+                  <div className="profile__wrapper__info">
+                    <h2 className="profile-name">
+                      <Field
                         className="text__input"
+                        name="username"
                         type="text"
-                        placeholder="https://..."
-                        value={newLink}
-                        onChange={(e) => setNewLink(e.target.value)}
+                        placeholder="Username"
                       />
+                      <ErrorMessage
+                        name="username"
+                        component="div"
+                        className="modal__error"
+                      />
+                    </h2>
+
+                    <p className="profile-title">
+                      <Field
+                        className="text__input"
+                        name="usertitle"
+                        type="text"
+                        placeholder="Your title"
+                      />
+                      <ErrorMessage
+                        name="usertitle"
+                        component="div"
+                        className="modal__error"
+                      />
+                    </p>
+
+                    <div className="profile__wrapper__avatar">
+                      <img
+                        className="profile__wrapper__avatar-img"
+                        src={preview || "/preview.png"}
+                        alt="Profile Preview"
+                      />
+                    </div>
+                    <input
+                      className="add-btn_picture"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => onFileChange(e, setFieldValue)}
+                    />
+                    {preview && preview !== "/preview.png" && (
                       <button
                         className="add-btn"
                         type="button"
-                        onClick={handleAddLink}
+                        onClick={handleRemovePhoto}
                         disabled={isSubmitting}
                       >
-                        Add
+                        Remove Photo
                       </button>
-                      {links.map((l) => (
-                        <div key={l.id} className="link-item">
-                          {editingId === l.id ? (
-                            <>
-                              <input
-                                className="text__input"
-                                value={editingValue}
-                                onChange={(e) =>
-                                  setEditingValue(e.target.value)
-                                }
-                              />
-                              <button
-                                className="add-btn"
-                                type="button"
-                                onClick={() => saveEdit(l.id)}
-                                disabled={isSubmitting}
-                              >
-                                Save
-                              </button>
-                              <button
-                                className="add-btn"
-                                type="button"
-                                onClick={() => setEditingId(null)}
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <a href={l.link} target="_blank" rel="noreferrer">
-                                {l.link}
-                              </a>
-                              <button
-                                className="link-btn"
-                                type="button"
-                                onClick={() => startEdit(l.id, l.link)}
-                                disabled={isSubmitting}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  height="24px"
-                                  viewBox="0 -960 960 960"
-                                  width="24px"
-                                  fill="var(--color-text)"
+                    )}
+                    <div className="profile-links">
+                      <p>You can also follow me on:</p>
+                      <div className="link-list">
+                        <input
+                          className="text__input"
+                          type="text"
+                          placeholder="https://..."
+                          value={newLink}
+                          onChange={(e) => setNewLink(e.target.value)}
+                        />
+                        <button
+                          className="add-btn"
+                          type="button"
+                          onClick={handleAddLink}
+                          disabled={isSubmitting}
+                        >
+                          Add
+                        </button>
+                        {links.map((l) => (
+                          <div key={l.id} className="link-item">
+                            {editingId === l.id ? (
+                              <>
+                                <input
+                                  className="text__input"
+                                  value={editingValue}
+                                  onChange={(e) =>
+                                    setEditingValue(e.target.value)
+                                  }
+                                />
+                                <button
+                                  className="add-btn"
+                                  type="button"
+                                  onClick={() => saveEdit(l.id)}
+                                  disabled={isSubmitting}
                                 >
-                                  <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-                                </svg>
-                              </button>
-                              <button
-                                className="link-btn"
-                                type="button"
-                                onClick={() => deleteLink(l.id)}
-                                disabled={isSubmitting}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  height="24px"
-                                  viewBox="0 -960 960 960"
-                                  width="24px"
-                                  fill="var(--color-text)"
+                                  Save
+                                </button>
+                                <button
+                                  className="add-btn"
+                                  type="button"
+                                  onClick={() => setEditingId(null)}
                                 >
-                                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                                </svg>
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      ))}
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <a
+                                  href={l.link}
+                                  className="small"
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {l.link}
+                                </a>
+                                <br></br>
+
+                                <span
+                                  onClick={() => startEdit(l.id, l.link)}
+                                  className="material-symbols-outlined"
+                                >
+                                  edit
+                                </span>
+
+                                <span
+                                  onClick={() => deleteLink(l.id)}
+                                  className="material-symbols-outlined"
+                                >
+                                  Delete
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* about me section*/}
-                <div className="profile__wrapper__info">
-                  <section className="s-profile-settings__section">
-                    <h3 className="s-section-title">About me</h3>
-                    <br></br>
-                    <Field as="textarea" name="bio" className="input__about" />
-                    <ErrorMessage
-                      name="bio"
-                      component="div"
-                      className="modal__error"
-                    />
-                  </section>{" "}
-                </div>
-              </header>
-              <button
-                type="submit"
-                className="save-btn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Saving..." : "Save changes"}
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </div>
+                  <div className="profile__wrapper__info">
+                    <section className="s-profile-settings__section">
+                      <h3 className="s-section-title">About me</h3>
+                      <br></br>
+                      <Field
+                        as="textarea"
+                        name="bio"
+                        className="input__about"
+                      />
+                      <ErrorMessage
+                        name="bio"
+                        component="div"
+                        className="modal__error"
+                      />
+                    </section>{" "}
+                  </div>
+                </header>
+                <button
+                  type="submit"
+                  className="save-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save changes"}
+                </button>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </aside>
     </div>
   );
 };

@@ -8,6 +8,7 @@ module.exports = async (req, res, next) => {
     if (!portfolio) {
       return res.status(400).json({ message: "You must create a portfolio first." });
     }
+
     req.portfolio = portfolio;
     next();
   } catch (err) {

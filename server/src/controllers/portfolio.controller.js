@@ -53,6 +53,7 @@ exports.getMyPortfolio = async (req, res) => {
     res.status(500).json({ message: "Error fetching portfolio", error: err.message });
   }
 };
+
 //get other users
 exports.getPortfolio = async (req, res) => {
   try {
@@ -120,6 +121,7 @@ exports.addCategory = async (req, res) => {
     res.status(500).json({ message: "Could not create category", error: err.message });
   }
 };
+
 //get for link
 exports.getCategoryById = async (req, res) => {
   try {
@@ -137,6 +139,7 @@ exports.getCategoryById = async (req, res) => {
     res.status(500).json({ message: "Error fetching category details", error: err.message });
   }
 };
+
 //get all logged users cats
 exports.getMyCategories = async (req, res) => {
   try {
@@ -149,6 +152,7 @@ exports.getMyCategories = async (req, res) => {
     res.status(500).json({ message: "Error fetching categories", error: err.message });
   }
 };
+
 //get non logged users cats
 exports.getMyCategoryById = async (req, res) => {
   try {
@@ -167,6 +171,7 @@ exports.getMyCategoryById = async (req, res) => {
     res.status(500).json({ message: "Error fetching category", error: err.message });
   }
 };
+
 //other users for link
 exports.getUserCategoryById = async (req, res) => {
   try {
@@ -202,6 +207,7 @@ exports.getUserCategories = async (req, res) => {
     res.status(500).json({ message: "Error fetching categories", error: err.message });
   }
 };
+
 //edit cat
 exports.editCategory = async (req, res) => {
   try {
@@ -215,6 +221,7 @@ exports.editCategory = async (req, res) => {
     res.status(500).json({ message: "Error updating category", error: err.message });
   }
 };
+
 //del cat + files
 exports.deleteCategory = async (req, res) => {
   try {
@@ -264,6 +271,7 @@ exports.uploadPortfolioFiles = async (req, res) => {
     res.status(500).json({ message: "Could not upload file", error: err.message });
   }
 };
+
 //logged users files
 exports.getMyPortfolioFiles = async (req, res) => {
   try {
@@ -284,7 +292,8 @@ exports.getMyPortfolioFiles = async (req, res) => {
     res.status(500).json({ message: "Error fetching files", error: err.message });
   }
 };
-//non logged usres files
+
+//non logged users files
 exports.getPortfolioFiles = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.params.username }, attributes: ["id"] });
@@ -307,6 +316,7 @@ exports.getPortfolioFiles = async (req, res) => {
     res.status(500).json({ message: "Error fetching files", error: err.message });
   }
 };
+
 //delete files + admin (not used)
 exports.deletePortfolioFiles = async (req, res) => {
   try {
@@ -335,4 +345,6 @@ exports.deletePortfolioFiles = async (req, res) => {
     res.status(500).json({ message: "Error deleting file", error: err.message });
   }
 };
+
+
 

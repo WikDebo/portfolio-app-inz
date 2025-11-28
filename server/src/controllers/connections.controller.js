@@ -34,7 +34,7 @@ exports.createConnection = async (req, res) => {
   }
 };
 // clicking unfollow btn
-exports.breakConnection = async (req, res) => {
+exports.unfollow = async (req, res) => {
   try {
     const followerId = req.userId;
     const {username} = req.body;
@@ -64,6 +64,7 @@ exports.breakConnection = async (req, res) => {
     res.status(500).send({ message: "Error while unfollowing: " + err.message });
   }
 };
+
 //shows users following + followers (in following / following page)
 exports.getFollowing = async (req, res) => {
   const userId = req.userId;
@@ -93,7 +94,6 @@ exports.getFollowers = async (req, res) => {
   });
   res.send(followers);
 };
-//same for non logged in users
 exports.getUsersFollowing = async (req, res) => {
    const username = req.params.username;
   try {
@@ -121,6 +121,7 @@ exports.getUsersFollowing = async (req, res) => {
     res.status(500).send({ message: "Error retrieving stats: " + err.message });
   }
 };
+
 exports.getUsersFollowers = async (req, res) => {
    const username = req.params.username;
   try {
@@ -183,7 +184,7 @@ exports.getFollowerStats = async (req, res) => {
         return res.status(404).send({ message: "User not found." });
       }
 
-    // count followers + following
+    // Count followers and following
     const followersCount = await Connections.count({ where: { followingId: user.id } });
     const followingCount = await Connections.count({ where: { followerId: user.id } });
 

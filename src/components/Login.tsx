@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import "../scss/components/_signin.scss";
-import AuthService from "../services/auth.service.ts";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import AuthService from "../services/auth.service.ts";
 import type { IUser } from "../types/user.type.ts";
-import { Navigate } from "react-router-dom";
 
 interface Props {
   closeModal: () => void;
@@ -25,34 +23,25 @@ const Login: React.FC<Props> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [redirect, setRedirect] = useState<string | null>(null);
 
-  const initialValues: FormValues = {
-    username: "",
-    password: "",
-  };
+  const initialValues: FormValues = { username: "", password: "" };
+
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("This field is required!"),
     password: Yup.string().required("This field is required!"),
   });
 
   const handleLogin = async (values: FormValues) => {
-    //setError("");
-    //setLoading(true);
+    setError("");
+    setLoading(true);
     try {
       const user = await AuthService.login(values.username, values.password);
       onLoginSuccess(user);
-      // Optional redirect
-      setRedirect("/profile");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }
     setLoading(false);
   };
-
-  if (redirect) {
-    return <Navigate to={redirect} />;
-  }
 
   return (
     <div className="modal" onClick={closeModal}>
@@ -88,8 +77,8 @@ const Login: React.FC<Props> = ({
             <Field
               type="password"
               id="password"
-              placeholder="Enter Password"
               name="password"
+              placeholder="Enter Password"
               required
             />
             <ErrorMessage
@@ -98,12 +87,8 @@ const Login: React.FC<Props> = ({
               className="modal__error"
             />
 
-            {/*<label className="modal__checkbox">
-            <input type="checkbox" defaultChecked /> Remember me
-          </label>
-          */}
             <button type="submit" disabled={loading} className="modal__button">
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <p className="modal__text">

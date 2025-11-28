@@ -43,20 +43,17 @@ const PortfolioEditPage: React.FC = () => {
   const handleConfirmAddCategory = async () => {
     if (!newCategoryName.trim()) return;
 
-    // Add the new category
     await PortfolioService.addCategory({ categoryName: newCategoryName });
 
-    // Refetch portfolio to get the new category with its ID
     const portfolio = await PortfolioService.getMyPortfolio();
     setCategories(portfolio.categories || []);
 
-    // Reset form
     setNewCategoryName("");
     setIsAdding(false);
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (!id) return; // make sure id exists
+    if (!id) return;
     if (!window.confirm("Delete this category?")) return;
 
     try {
@@ -69,73 +66,96 @@ const PortfolioEditPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>{portfolioExists ? "Edit Portfolio" : "Create Your Portfolio"}</h2>
+    <aside className="page-content">
+      <div className="portfolio">
+        <div className="portfolio__all">
+          <h2>
+            {portfolioExists ? "Edit Portfolio" : "Create Your Portfolio"}
+          </h2>
 
-      {/* portfolio edit */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSavePortfolio();
-        }}
-      >
-        <label>
-          Title:
-          <input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
+          <div className="portfolio__input">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSavePortfolio();
+              }}
+            >
+              <label>
+                Title:
+                <input
+                  className="title__input"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </label>
+              <br></br>
+              <label>
+                Description:
+                <textarea
+                  className="input__desc"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </label>
 
-        <label>
-          Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
-
-        <button type="submit">
-          {portfolioExists ? "Save Changes" : "Create Portfolio"}
-        </button>
-      </form>
-
-      {portfolioExists && (
-        <>
-          <h3>Categories</h3>
-          {/* add category  */}
-          {!isAdding ? (
-            <button onClick={() => setIsAdding(true)}>Add Category</button>
-          ) : (
-            <div className="category__text">
-              <input
-                placeholder="Category name"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-              />
-              <button onClick={handleConfirmAddCategory}>Add</button>
-              <button onClick={() => setIsAdding(false)}>Cancel</button>
-            </div>
-          )}
-          <ul>
-            {categories.map((cat) => (
-              <li key={cat.id}>
-                {cat.categoryName}
-                <Link
-                  className="category__text"
-                  to={`/profile/portfolio/category/${cat.id}/edit`}
-                >
-                  Edit
-                </Link>
-                <button
-                  className="btn"
-                  onClick={() => handleDeleteCategory(cat.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
+              {portfolioExists && (
+                <>
+                  <div>
+                    <h3>Categories</h3>
+                    {!isAdding ? (
+                      <button
+                        className="link-btn"
+                        onClick={() => setIsAdding(true)}
+                      >
+                        Add Category
+                      </button>
+                    ) : (
+                      <div className="portfolio__add-category">
+                        <input
+                          placeholder="Category name"
+                          className="portfolio__add-category__input"
+                          value={newCategoryName}
+                          onChange={(e) => setNewCategoryName(e.target.value)}
+                        />
+                        <button
+                          className="portfolio__add-category__btn"
+                          onClick={handleConfirmAddCategory}
+                        >
+                          Add
+                        </button>
+                        <button
+                          className="portfolio__add-category__btn"
+                          onClick={() => setIsAdding(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {categories.map((cat) => (
+                    <div key={cat.id} className="portfolio__input-catlist">
+                      <span>{cat.categoryName}</span>
+                      <Link to={`/profile/portfolio/category/${cat.id}/edit`}>
+                        <i className="material-symbols-outlined">edit</i>
+                      </Link>
+                      <a
+                        onClick={() => handleDeleteCategory(cat.id)}
+                        className="material-symbols-outlined"
+                      >
+                        delete
+                      </a>
+                    </div>
+                  ))}
+                </>
+              )}
+              <button className="save-btn" type="submit">
+                {portfolioExists ? "Save Changes" : "Create Portfolio"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </aside>
   );
 };
 

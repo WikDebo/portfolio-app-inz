@@ -11,7 +11,7 @@
   font-size: clamp(#{if($min-value > $max-value, $max-value, $min-value)}, #{$calc-value}, #{if($min-value > $max-value, $min-value, $max-value)});
 }
 $breakpoints: (
-  'medium': f.em(700),
+  'medium': f.em(900),
   'large': f.em(1200)
 );
 

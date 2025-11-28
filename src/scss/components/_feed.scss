@@ -1,18 +1,19 @@
 @use "../util/" as u;
+
 .feed-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: u.rem(2);
+  grid-template-columns: repeat(4, 1fr);
+  gap: u.rem(1);
   width: 100%;
   justify-content: center;
   justify-items: stretch;
 
   &__container {
-    position: relative; // needed for overlay
+    position: relative;
     width: 100%;
     cursor: pointer;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: u.rem(5);
 
     &:hover .feed-grid__wrapper {
       opacity: 1;
@@ -20,8 +21,7 @@
     }
 
     &:hover img {
-      transform: scale(1.01); // subtle zoom on hover
-      filter: brightness(0.50); // darken the image slightly
+      filter: brightness(0.5);
     }
   }
 
@@ -29,16 +29,15 @@
     width: 100%;
     height: u.rem(220);
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: u.rem(5);
     transition: transform 0.3s ease, filter 0.3s ease;
     display: block;
   }
-  
+
   &__profile {
     display: flex;
     align-items: center;
     gap: u.rem(12);
-    //margin-top: u.rem(08);
     padding: u.rem(10);
 
     &-img {
@@ -50,11 +49,10 @@
     }
 
     &-name {
-      //@include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(14), u.rem(16));
       font-weight: 500;
       margin-top: u.rem(0);
       margin-left: u.rem(10);
-      color: var(--color-bg);
+      color: var(--color-text);
     }
   }
   &__wrapper {
@@ -65,31 +63,66 @@
     display: flex;
     align-items: left;
     justify-content: left;
-    color: var(--color-bg);
+    color: var(--color-text);
     width: 100%;
     text-align: center;
     font-size: 1rem;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
-    transform: translateY(20px); // slide up effect
-    border-radius: 8px;
-    pointer-events: none; // prevents overlay from blocking hover
+    transform: translateY(u.rem(15));
+    border-radius: u.rem(5);
+    pointer-events: none;
+  }
+  @include u.breakpoint-down("large") {
+    width: fit-content;
+    
+  }
+  @include u.breakpoint-down("medium") {
+    width: fit-content;
+    grid-template-columns: repeat(3, 1fr);
+    &__item{
+       width: 100%;
+    height: u.rem(150);
+    }
+    .feed-grid__wrapper {
+      display: none;
+    }
   }
 }
-
-.feed {
-  border: 1px solid hsl(60, 3%, 92%);
+.feedgrid__modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   width: 100%;
-  display: flex; // instead of grid
+  height: 100%;
+  padding-block: u.rem(50) u.rem(20);
+  overflow-y: auto;
+  background-color: rgba(152, 143, 129, 0.52);
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  &__content {
+    border: none;
+    border-radius: u.rem(15);
+    background: var(--color-bg);
+  }
+}
+.feed {
+  border: u.rem(1) solid var(--color-border);
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  background: var(--color-header-bg);
+  background: var(--color-bg);
   border-radius: u.rem(5);
-  padding: 0;
+  padding: u.rem(10) u.rem(50);
+
   &__profile {
     display: flex;
     align-items: center;
     gap: u.rem(12);
-    //margin-top: u.rem(12);
     padding: u.rem(10);
 
     &-img {
@@ -101,7 +134,6 @@
     }
 
     &__profilename {
-      //@include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(14), u.rem(16));
       font-weight: 600;
       margin-top: u.rem(15);
       color: var(--color-text);
@@ -109,16 +141,14 @@
   }
 
   &__caption {
-    //@include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(14), u.rem(16));
     color: var(--color-text);
-    //margin-top: u.rem(8);
-    //padding: u.rem(0);
-    margin-left: u.rem(15);gap: u.rem(0);
+    margin-left: u.rem(15);
+    gap: u.rem(0);
   }
   &__image {
     width: auto;
     max-height: u.rem(500);
-    border-radius: u.rem(12);
+    border-radius: u.rem(5);
     object-fit: cover;
     background: var(--color-secondary);
     margin: u.rem(10);
@@ -128,25 +158,24 @@
     align-items: center;
     gap: u.rem(12);
     margin-bottom: u.rem(10);
-    padding: u.rem(10) ;
+    padding: u.rem(10);
 
     & button {
       padding: u.rem(8) u.rem(16);
       border: none;
-      border-radius: u.rem(8);
+      border-radius: u.rem(5);
       cursor: pointer;
       font-weight: 500;
-      //@include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(14), u.rem(16));
       transition: background 0.3s ease, color 0.3s ease;
 
       &.liked {
-        background: var(--color-accent);
-        color: var(--color-bg);
+        background: var(--color-secondary);
+        color: var(--color-text);
       }
 
       &.not-liked {
-        background: var(--color-secondary);
-        color: var(--color-text);
+        background: var(--color-accent);
+        color: var(--color-bg);
       }
 
       &:disabled {
@@ -156,27 +185,84 @@
     }
 
     & span {
-      //@include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(14), u.rem(16));
+      color: var(--color-text);
+    }
+  }
+  @include u.breakpoint-down("large") {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    border-radius: u.rem(5);
+    padding: u.rem(10) u.rem(5);
+     &__profile {
+    padding: u.rem(4);
+
+    &-img {
+      width: u.rem(40);
+      height: u.rem(40);
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-secondary);
+    }
+
+    &__profilename {
+      font-weight: 600;
+      margin-top: u.rem(15);
       color: var(--color-text);
     }
   }
 
+  &__caption {
+    color: var(--color-text);
+    margin-left: u.rem(15);
+    gap: u.rem(0);
+  }
+    &__image {
+    max-width: 100%;
+    border-radius: u.rem(5);
+    object-fit: cover;
+    background: var(--color-secondary);
+    margin: u.rem(10);
+  }
+  }
+  @include u.breakpoint-down("medium") {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    border-radius: u.rem(5);
+    padding: u.rem(10) u.rem(5);
+     &__profile {
+    padding: u.rem(4);
 
-  // ===== Responsive =====
-  @include u.breakpoint('medium') {
-    padding: u.rem(12);
-    &__profile {
-      &img {
-        width: u.rem(36);
-        height: u.rem(36);
-      }
+    &-img {
+      width: u.rem(40);
+      height: u.rem(40);
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-secondary);
+    }
+
+    &__profilename {
+      font-weight: 600;
+      margin-top: u.rem(15);
+      color: var(--color-text);
     }
   }
 
-  @include u.breakpoint-down('medium') {
-    &__caption,
-    &__likeArea span {
-      text-align: left;
-    }
+  &__caption {
+    color: var(--color-text);
+    margin-left: u.rem(15);
+    gap: u.rem(0);
+  }
+  &__image {
+    max-width: 100%;
+    border-radius: u.rem(5);
+    object-fit: cover;
+    background: var(--color-secondary);
+    margin: u.rem(10);
+  }
+    
   }
 }

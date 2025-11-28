@@ -1,12 +1,27 @@
-:root {
-    --color-bg: #faf7f6;
+:root,
+[data-theme="light"] {
+    --color-bg: hsl(15, 29%, 97%);
     --color-header-bg: hsla(60, 12%, 95%, 0.397);
     --color-text: hsl(80, 16%, 15%);
     --color-accent: #dc7a34;
     --color-secondary: #d3b5a0;
     --color-highlight: #dc7a34;
+    --color-border: hsl(60, 3%, 92%);
     --color-text: hsl(80, 16%, 15%);
     --color-dark-1: hsla(80, 16%, 15%, 0.637);
+    --color-dark-2: hsla(80, 16%, 15%, 0.473);
+    --color-dark-3: hsla(80, 16%, 15%, 0.308);
+    --color-dark-4: hsla(80, 16%, 15%, 0.219);
+}
+[data-theme="dark"],
+body.dark {
+  --color-bg: hsl(24, 33%, 3%);
+  --color-text: hsl(80, 16%, 85%);
+  --color-accent: hsl(25, 82%, 53%);
+  --color-secondary: hsl(26, 37%, 27%);
+  --color-highlight: hsl(25, 82%, 56%);
+  --color-border: #2a2a2a;
+   --color-dark-1: hsla(80, 16%, 15%, 0.637);
     --color-dark-2: hsla(80, 16%, 15%, 0.473);
     --color-dark-3: hsla(80, 16%, 15%, 0.308);
     --color-dark-4: hsla(80, 16%, 15%, 0.219);

@@ -1,7 +1,6 @@
 @use '../util/' as u;
 @import url('https://fonts.googleapis.com/css2?family=Inder&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merienda:wght@300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
-//everything styling on page flexbox itp
 .wrapper {
   width: min(100% - 40px, u.rem(1100));
   margin-inline: auto;
@@ -9,6 +8,7 @@
   flex-direction: column;
   gap: u.rem(24);
   background: var(--color-bg);
+  
   &__link {
     margin: 0;
     font-family: 'Merienda', cursive;
@@ -29,4 +29,19 @@
       padding-block: u.rem(60);
     }
   }
+}
+.message{
+  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(16), u.rem(18));
+  color: var(--color-text);
+  line-height: 1.6;
+  font-weight: 700;
+}
+.page-content > * {
+  animation: slideUp 0.6s ease-in-out;
+  animation-fill-mode: both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

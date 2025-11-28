@@ -14,9 +14,9 @@ router.use((req, res, next) => {
 
 // Portfolio routes
 router.get("/user", authJwt.verifyToken, controller.getMyPortfolio);
+router.get("/:username", authJwt.verifyToken, controller.getPortfolio);
 router.post("/user/create", authJwt.verifyToken, controller.createPortfolio);
 router.put("/user/edit", authJwt.verifyToken, controller.editPortfolio);
-router.get("/:username", authJwt.verifyToken, controller.getPortfolio);
 
 // Category routes
 router.post(

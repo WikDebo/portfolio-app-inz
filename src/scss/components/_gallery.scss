@@ -1,45 +1,80 @@
+@use '../util/' as u;
 .gallery {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
-
+  padding: u.rem(1);
   &__title {
-    //font-size: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: u.rem(1);
   }
-
   &__upload {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-
-    input[type="text"] {
-      flex: 1;
-      padding: 0.5rem;
+  display: flex;
+  margin: u.rem(25);
+  flex-direction: column;
+  background: var(--color-bg);
+  border-radius: u.rem(5);
+  border: u.rem(1) solid var(--color-border);
+  min-height: max-content;
+  padding: u.rem(20) u.rem(40);
+  align-items: center;
+   .title__input {
+       flex: 1;
+      padding: u.rem(12) u.rem(15);
+      border-radius: u.rem(8);
+      border: u.rem(1) solid;
+      border-color: var(--color-text);
+      background-color: var(--color-header-bg);
+      outline: none;
+      min-width: fit-content;
+      width: 50%;
+      border: u.rem(1)solid var(--color-border);
+      color: var(--color-text);
+      margin-bottom: u.rem(5);
     }
 
-    button {
-      padding: 0.5rem 1rem;
+    .save-btn {
+      margin-bottom: u.rem(5);
+      padding: u.rem(10) u.rem(20);
+      background: var(--color-highlight);
+      color: var(--color-text);
+      border: none;
+      border-radius: u.rem(10);
+      width: 50%;
       cursor: pointer;
+      transition: background-color 150ms ease-in-out;
+      &:hover {
+        background-color: var(--color-secondary);
+      }
+      &:active {
+        background: var(--color-secondary);
+      }
     }
   }
 
   &__message {
-    color: red;
-    margin-bottom: 1rem;
+    color: var(--color-highlight);
+    margin-bottom: u.rem(1);
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
+    grid-template-columns: repeat(4, 1fr);
+    gap: u.rem(5);
 
+  }
+&__preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: u.rem(12);
+  border-radius: u.rem(5);
+  max-width: 50%;
+}
   &__item-container {
     position: relative;
     cursor: pointer;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: u.rem(2);
 
     &:hover .gallery__overlay {
       opacity: 1;
@@ -54,9 +89,9 @@
 
   &__item {
     width: 100%;
-    height: 200px;
+    height: u.rem(300);
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: u.rem(5);
     transition: transform 0.3s ease, filter 0.3s ease;
   }
 
@@ -65,12 +100,12 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 0.5rem;
+    padding: u.rem(0.5);
     background: rgba(0, 0, 0, 0.5);
     color: #fff;
     text-align: center;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(u.rem(25));
     transition: opacity 0.3s ease, transform 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -78,15 +113,15 @@
     justify-content: center;
 
     & .gallery__caption {
-      margin-bottom: 0.5rem;
+      margin-bottom:u.rem(0.5);
     }
 
     & .gallery__delete-btn {
       background: red;
       border: none;
-      padding: 0.3rem 0.6rem;
+      padding: u.rem(0.3) u.rem(0.6);
       color: white;
-      border-radius: 4px;
+      border-radius: u.rem(5);
       cursor: pointer;
     }
   }
@@ -102,36 +137,42 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-  }
-
-  &__modal-content {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  &__modal-img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-
-  &__modal-caption {
-    margin-top: 0.5rem;
-    font-weight: 500;
-  }
-
-  &__modal-delete {
-    margin-top: 0.5rem;
-    background: red;
+    text-align: end;
+  &-delete {
+    background: rgba(255, 0, 0, 0.459);
     border: none;
     color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    padding: u.rem(0.5) u.rem(1);
+    border-radius: u.rem(5);
     cursor: pointer;
   }
+}
+  @include u.breakpoint-down("large") {
+     &__upload {
+      margin: u.rem(15);
+     }
+  }
+   
+  @include u.breakpoint-down("medium") {
+    margin: 0;
+    padding: u.rem(10) u.rem(5) ;
+    &__upload {
+      width: 100%;
+      align-content: center;
+      margin: u.rem(0);
+      margin-bottom: u.rem(15);
+      .title__input,
+      .save-btn{
+        width: 100%;
+      }
+     }
+     &__grid{
+      width: fit-content;
+    grid-template-columns: repeat(3, 1fr);
+     }
+     &__item{
+      width: 100%;
+    height: u.rem(150);
+    }
+}
 }

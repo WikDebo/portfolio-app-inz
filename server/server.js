@@ -15,9 +15,8 @@ app.use("/uploads", express.static(path.join(__dirname, "resources/static/assets
 
 app.use(cors(corsOptions));
 
-// parse requests of content-type - application/json
+
 app.use(express.json());
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 // simple route
@@ -32,9 +31,9 @@ require('./src/routes/user.routes')(app);
 const galleryRoutes = require('./src/routes/gallery.routes');
 app.use('/api/gallery', galleryRoutes);
 const portfolioRoutes = require('./src/routes/portfolio.routes');
-app.use('/api/portfolio', portfolioRoutes); 
+app.use('/api/portfolio', portfolioRoutes);
 const connectionRoutes = require('./src/routes/connections.routes');
-app.use('/api/connection', connectionRoutes); 
+app.use('/api/connection', connectionRoutes);
 const likesRoutes = require("./src/routes/likes.routes");
 app.use('/api/likes', likesRoutes);
 const Roles = db.roles;
@@ -43,12 +42,13 @@ app.use("/api/feed", feedRoutes);
 const searchRoutes = require("./src/routes/search.routes");
 app.use('/api/', searchRoutes);
 
-db.sequelize.sync({force: true}).then(() => {
+/*db.sequelize.sync({force: true}).then(() => {
   console.log('Drop and Resync Db');
   initial();
 });
-/*/ after finishing
-db.sequelize.sync();*/ 
+
+/ after finishing*/
+db.sequelize.sync(); 
 
 async function initial() {
   await Roles.bulkCreate(

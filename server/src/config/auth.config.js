@@ -1,11 +1,9 @@
 module.exports = {
   secret: "artfolio-secret-key",
   jwtExpiration: 3600,           // 1 hour
-  jwtRefreshExpiration: 86400,   // 24 hours
+  jwtRefreshExpiration: 259200,   // 72 hours
 
   /* for test 
   jwtExpiration: 40,          // 1 minute
-  jwtRefreshExpiration: 60,  // 2 minutes
-  // 
-  */
+  jwtRefreshExpiration: 60,  // 2 minutes*/
 };

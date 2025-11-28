@@ -7,12 +7,16 @@ h4 {
   margin: 0;
   font-weight: 500;
   line-height: 1;
+  &.text-decorational-part{
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: var(transparent);
+  color: transparent;
+}
 }
 
 h1 {
-  @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(28), u.rem(36));
-  font-family: 'Merienda', cursive;
-  color: var(--color-accent);
+  @include u.fs-fluid(u.rem(370), u.rem(1200), u.rem(28), u.rem(36));
+  color: var(--color-text);
 }
 
 h2 {
@@ -27,11 +31,19 @@ p {
   @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(16), u.rem(18));
   color: var(--color-text);
   line-height: 1.6;
+  &.bold{
+    font-weight: 700;
+  }
   &.medium {
     font-size: u.rem(15);
   }
   &.small {
     font-size: u.rem(13);
+  }
+  &.truncate{
+    height: 54px;
+    overflow: hidden;
+    position: relative;
   }
 }
 
@@ -39,10 +51,12 @@ a {
   text-decoration: none;
   color: var(--color-text);
   transition: color 150ms ease-in-out;
-
+  cursor: pointer;
+  
   &:hover {
     color: var(--color-accent);
   }
+  
 }
 p > a {
   color: var(--color-text);
@@ -53,10 +67,8 @@ p > a {
     color: var(--color-accent);
   }
 }
-.font-effect{
-  font-style: italic;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: var(--color-accent);
-  color: transparent;
+.material-icons {
+  font-family: 'Material Icons' !important;
+  display: inline-block;
   
 }

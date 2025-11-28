@@ -1,4 +1,3 @@
-//not used
 const db = require("../models");
 const Likes = db.likes;
 const GalleryFiles = db.galleryFiles;

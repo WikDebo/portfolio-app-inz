@@ -1,6 +1,7 @@
 const db = require("../models");
 const Links = db.links;
 const User = db.users;
+
 exports.getMyLinks = async (req, res) => {
   try {
     const links = await Links.findAll({ where: { userId: req.userId } });

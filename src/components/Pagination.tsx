@@ -15,10 +15,8 @@ const Pagination: React.FC<PaginationProps> = ({
     const pages: (number | string)[] = [];
 
     if (totalPages <= 7) {
-      // Show all pages if there are few
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      // Always show first, last, and nearby pages
       if (page <= 4) {
         pages.push(1, 2, 3, 4, 5, "...", totalPages);
       } else if (page >= totalPages - 3) {
@@ -43,14 +41,18 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="home__pagination">
-      {/* Page list */}
       <ul>
-        {pages.map((num, idx) => (
-          <li key={idx}>
+        {pages.map((num, id) => (
+          <li key={id}>
             {num === "..." ? (
               <span>…</span>
             ) : (
-              <button onClick={() => setPage(Number(num))}>{num}</button>
+              <a
+                className={num === page ? "active" : ""}
+                onClick={() => setPage(Number(num))}
+              >
+                {num}
+              </a>
             )}
           </li>
         ))}

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import AuthService from "../services/auth.service.ts";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import AuthService from "../services/auth.service.ts";
 
-type SignupProps = {
+interface SignupProps {
   closeModal: () => void;
   switchToLogin: () => void;
-};
+}
 
 interface FormValues {
   email: string;
@@ -19,7 +19,6 @@ interface FormValues {
 
 const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
   const [error, setError] = useState("");
-  //const { setCurrentUser } = useContext(AuthContext);
 
   const initialValues: FormValues = {
     email: "",
@@ -30,16 +29,14 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
-      .min(3, "The username must be at least 3 characters.")
-      .max(20, "The username cannot exceed 20 characters.")
-      .required("This field is required!"),
-    email: Yup.string()
-      .email("This is not a valid email.")
-      .required("This field is required!"),
+      .min(3, "At least 3 characters")
+      .max(20, "Max 20 characters")
+      .required("Required"),
+    email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string()
-      .min(6, "The password must be at least 6 characters.")
-      .max(40, "The password cannot exceed 40 characters.")
-      .required("This field is required!"),
+      .min(6, "At least 6 characters")
+      .max(40, "Max 40 characters")
+      .required("Required"),
   });
 
   const handleRegister = async (values: FormValues) => {
@@ -70,7 +67,6 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
         >
           <Form>
             <h1>Sign Up</h1>
-
             {error && <p className="modal__error">{error}</p>}
 
             <label htmlFor="email">
@@ -133,19 +129,14 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
               className="modal__error"
             />
 
-            <p className="modal__text">
-              By creating an account you agree to our{" "}
-              <span>Terms & Privacy</span>.
-            </p>
-
             <button type="submit" className="modal__button">
               Sign up
             </button>
 
-            <div className="modal__text">
+            <p className="modal__text">
               Already have an account?{" "}
               <span onClick={switchToLogin}>Sign in</span>
-            </div>
+            </p>
           </Form>
         </Formik>
       </div>

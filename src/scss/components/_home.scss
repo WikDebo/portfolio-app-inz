@@ -1,55 +1,110 @@
 @use "../util/" as u;
 
 .home {
-  //display: flexbox;
   align-items: center;
   gap: u.rem(160);
-  width: inherit;
-  inset-inline-start: 25%;
+  width: 100%;
+  height: 100%;
+  &__enter {
+    padding: u.rem(50) u.rem(50);
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    .btn {
+      position: relative;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text);
+      background: none;
+      border: u.rem(2) solid var(--color-highlight);
+      border-radius: u.rem(8);
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
 
+    .liquid {
+      background: linear-gradient(var(--color-highlight) 0 0) no-repeat
+        calc(200% - var(--p, 0%)) 100% / 200% var(--p, 0.2em);
+      transition: 0.3s var(--t, 0s),
+        background-position 0.3s calc(0.3s - var(--t, 0s));
+    }
+
+    .liquid:hover {
+      --p: 100%;
+      --t: 0.3s;
+      color: var(--color-border);
+    }
+  }
   &__main {
     margin-bottom: u.rem(50);
   }
+  &__all {
+    padding: u.rem(50) u.rem(50);
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
   &__pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0px;
-    gap: 8px;
-    margin-top: 20px;
+    padding: u.rem(10) u.rem(10);
+    cursor: pointer;
+    margin-top: u.rem(20);
     flex-wrap: wrap;
+
     ul {
       display: flex;
-      gap: 6px;
+      gap: u.rem(8);
       list-style: none;
       padding: 0;
       margin: 0;
 
-      // li {
-      //   display: block; /* let links fill the list item */
-      //   padding: 8px 12px;
-      //   text-decoration: none;
-      //   border: 1px solid gray;
-      //   color: black;
-      //   margin: 0 4px;
-      //   border-radius: 5px; /* add rounded borders */
-      // }
-    
-    button {
-      padding: 5px 10px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      background-color: #fff;
-      color: #000;
-      cursor: pointer;
+      a {
+        display: block;
+        padding: u.rem(8) u.rem(12);
+        text-decoration: none;
+        border: u.rem(1) solid var(--color-border);
+        margin: 0 u.rem(4);
+        border-radius: u.rem(5);
+        &.active {
+          border: 1px solid var(--color-highlight);
+        }
+      }
     }
   }
+
+  em {
+    font-style: normal;
+    background: var(--color-highlight);
+  }
+  @include u.breakpoint-down("large") {
+    .home__all {
+      width: fit-content;
+    }
+  }
+  @include u.breakpoint-down("medium") {
+    .home {
+      display: flex;
+      align-items: center;
+      gap: u.rem(160);
+      height: 100%;
+
+      &__main {
+        margin-bottom: u.rem(0);
+      }
+      &__all {
+        padding: u.rem(15) u.rem(10);
+        justify-content: center;
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+      }
+    }
   }
 }
-
-em {
-  font-style: normal;
-  background: var(--color-highlight);
-}
- 
-

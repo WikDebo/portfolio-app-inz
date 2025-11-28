@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import searchService from "../services/search.service";
 import type { IGalleryFile } from "../types/gallery.type";
@@ -56,13 +57,77 @@ function SearchPage() {
     navigate(`/search?query=${encodeURIComponent(q)}`);
     runSearch(q);
   };
+  if (loading)
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="40"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.4"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="100"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.2"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="160"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="0"
+          ></animate>
+        </circle>
+      </svg>
+    );
 
   return (
     <div className="search">
       <h2>Search</h2>
 
-      {/* Search Bar */}
-      <div className="search__bar">
+      <form
+        className="search__bar"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+      >
         <input
           type="text"
           placeholder="Search profiles, portfolios, or gallery..."
@@ -70,14 +135,14 @@ function SearchPage() {
           onChange={(e) => setQuery(e.target.value)}
           className="search__input"
         />
-        <button onClick={handleSearch} className="search__btn">
+
+        <button type="submit" className="search__btn">
           Search
         </button>
-      </div>
+      </form>
 
-      {loading && <p>Loading...</p>}
+      {loading}
 
-      {/* Tabs section */}
       <div className="search__tabspace">
         {[
           {
@@ -98,76 +163,77 @@ function SearchPage() {
         ))}
       </div>
 
-      {/* Users section*/}
-      {(searchTab === "All" || searchTab === "Users") && users.length > 0 && (
-        <div className="search__info">
-          {users.map((u) => (
-            <Link
-              key={u.id}
-              to={`/profile/${u.username}`}
-              className="feed__profile"
-            >
-              <img
-                src={
-                  u.profilephoto
-                    ? `http://localhost:8080/uploads/${u.profilephoto}`
-                    : "/silly-seal.gif"
-                }
-                alt={u.username}
-                width={40}
-                height={40}
-                className="feed__profile-img"
-              />
-              <div>
-                <strong>{u.username}</strong>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Portfolios section*/}
-      {(searchTab === "All" || searchTab === "Portfolios") &&
-        portfolios.length > 0 && (
+      <aside className="page-content">
+        {(searchTab === "All" || searchTab === "Users") && users.length > 0 && (
           <div className="search__info">
-            {portfolios.map((p) => (
+            {users.map((u) => (
               <Link
-                key={p.id}
-                to={`/profile/${p.user?.username}/portfolio`}
-                className="search__info-links"
+                key={u.id}
+                to={`/profile/${u.username}`}
+                className="feed__profile"
               >
-                <strong>{p.title || "Untitled Portfolio"}</strong>
-                <p>{p.description || "No description"}</p>
+                <img
+                  src={
+                    u.profilephoto
+                      ? `http://localhost:8080/uploads/${u.profilephoto}`
+                      : "/preview.png"
+                  }
+                  alt={u.username}
+                  width={40}
+                  height={40}
+                  className="feed__profile-img"
+                />
+                <div>
+                  <strong>{u.username}</strong>
+                </div>
               </Link>
             ))}
           </div>
         )}
-
-      {/* Gallerysection */}
-      {(searchTab === "All" || searchTab === "Gallery") &&
-        gallery.length > 0 && (
-          <div className="gallery__grid">
-            {gallery.map((g) => (
-              <div
-                key={g.id}
-                className="gallery__item-container"
-                onClick={() => {
-                  if (!g.user)
-                    return console.error("File has no user attached:", g);
-                  setModalItem({ file: g, user: g.user });
-                }}
-              >
-                <img
-                  src={`http://localhost:8080${g.path}`}
-                  alt={g.caption || "Gallery Image"}
-                  className="gallery__item"
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-      {/* Gallery section - modal */}
+      </aside>
+      <div className="page-content">
+        {(searchTab === "All" || searchTab === "Portfolios") &&
+          portfolios.length > 0 && (
+            <div className="search__info">
+              {portfolios.map((p) => (
+                <Link
+                  key={p.id}
+                  to={`/profile/${p.user?.username}/portfolio`}
+                  className="portfolio-link"
+                >
+                  <strong>{p.title || "Untitled Portfolio"}</strong>
+                  <p className="truncate">
+                    {p.description || "No description"}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
+      </div>
+      <div className="page-content">
+        {(searchTab === "All" || searchTab === "Gallery") &&
+          gallery.length > 0 && (
+            <div className="gallery__grid">
+              {gallery.map((g) => (
+                <div
+                  key={g.id}
+                  className="gallery__item-container"
+                  onClick={() => {
+                    if (!g.user)
+                      return console.error("File has no user attached:", g);
+                    setModalItem({ file: g, user: g.user });
+                  }}
+                >
+                  <img
+                    src={`http://localhost:8080${g.path}`}
+                    alt={g.caption || "Gallery Image"}
+                    className="gallery__item"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+      </div>
       {modalItem && (
         <div onClick={() => setModalItem(null)} className="modal">
           <div onClick={(e) => e.stopPropagation()} className="modal__content">

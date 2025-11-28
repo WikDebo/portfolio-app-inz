@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import GalleryService from "../services/gallery.service";
 import type { IGalleryFile } from "../types/gallery.type";
 import type { IUser } from "../types/user.type";
 import GalleryItem from "./GalleryItem";
+import AuthContext from "../context/AuthContext";
 
 const Gallery: React.FC = () => {
   const { username } = useParams();
   const isOwner = !username;
-
+  const { currentUser } = useContext(AuthContext);
   const [files, setFiles] = useState<IGalleryFile[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [caption, setCaption] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<{
     user: IUser;
     file: IGalleryFile;
   } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string>();
 
   useEffect(() => {
     const loadGallery = async () => {
@@ -35,6 +37,13 @@ const Gallery: React.FC = () => {
     loadGallery();
   }, [username, isOwner]);
 
+  const selectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files?.[0] ?? null;
+    if (!selectedFiles) return;
+    setFile(selectedFiles);
+    setPreview(URL.createObjectURL(selectedFiles));
+  };
+  // Upload new file
   const handleUpload = async () => {
     if (!file) return setMessage("Please select a file.");
 
@@ -44,10 +53,18 @@ const Gallery: React.FC = () => {
 
     try {
       setUploading(true);
+
       const response = await GalleryService.uploadGalleryFile(formData);
-      setFiles([response.file, ...files]);
+
+      const fileWithUser = {
+        ...response.file,
+        user: currentUser,
+      };
+
+      setFiles([fileWithUser, ...files]);
       setFile(null);
       setCaption("");
+      setPreview("/preview.png");
       setMessage(response.message || "Upload successful!");
     } catch (err: any) {
       setMessage(err.response?.data?.message || err.message || "Upload failed");
@@ -56,6 +73,7 @@ const Gallery: React.FC = () => {
     }
   };
 
+  // Delete file
   const handleDelete = async (fileId: number) => {
     if (!window.confirm("Delete this file?")) return;
 
@@ -64,7 +82,6 @@ const Gallery: React.FC = () => {
 
       setFiles((prevFiles) => prevFiles.filter((f) => f.id !== fileId));
 
-      // Close modal if the deleted file is open
       if (selectedItem?.file.id === fileId) {
         setSelectedItem(null);
       }
@@ -77,55 +94,58 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="gallery">
-      <h2 className="gallery__title">
-        {isOwner ? "My Gallery" : `${username}'s Gallery`}
-      </h2>
+      <aside className="page-content">
+        <h2 className="gallery__title">
+          {isOwner ? "My Gallery" : `${username}'s Gallery`}
+        </h2>
 
-      {/* Upload modal? */}
-      {isOwner && (
-        <div className="gallery__upload">
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-          <input
-            type="text"
-            placeholder="Caption"
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-          />
-          <button onClick={handleUpload} disabled={uploading}>
-            {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </div>
-      )}
-
-      {message && <p className="gallery__message">{message}</p>}
-
-      {/* Gallery grid */}
-      <div className="gallery__grid">
-        {files.map((file) => (
-          <div
-            key={file.id}
-            className="gallery__item-container"
-            onClick={() => {
-              if (!file.user) {
-                console.error("File has no user attached:", file);
-                return;
-              }
-              setSelectedItem({ file, user: file.user });
-            }}
-          >
-            <img
-              src={`http://localhost:8080${file.path}`}
-              alt={file.caption || ""}
-              className="gallery__item"
+        {isOwner && (
+          <div className="gallery__upload">
+            {file && (
+              <img className="gallery__preview" src={preview} alt="Preview" />
+            )}
+            <input type="file" onChange={selectImage} />
+            <input
+              className="title__input"
+              type="text"
+              placeholder="Caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
             />
+            <button
+              className="save-btn"
+              onClick={handleUpload}
+              disabled={uploading}
+            >
+              {uploading ? "Uploading..." : "Upload"}
+            </button>
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* Modal */}
+        {message && <p className="gallery__message">{message}</p>}
+
+        <div className="gallery__grid">
+          {files.map((file) => (
+            <div
+              key={file.id}
+              className="gallery__item-container"
+              onClick={() => {
+                if (!file.user) {
+                  console.error("File has no user attached:", file);
+                  return;
+                }
+                setSelectedItem({ file, user: file.user });
+              }}
+            >
+              <img
+                src={`http://localhost:8080${file.path}`}
+                alt={file.caption || ""}
+                className="gallery__item"
+              />
+            </div>
+          ))}
+        </div>
+      </aside>
       {selectedItem && (
         <div className="modal" onClick={() => setSelectedItem(null)}>
           <div className="modal__content" onClick={(e) => e.stopPropagation()}>

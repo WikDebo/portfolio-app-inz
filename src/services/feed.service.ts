@@ -15,7 +15,7 @@ class FeedService {
   searchEverything(query: string) {
     return api
       .get(`/search?query=${encodeURIComponent(query)}`)
-      .then(res => res.data); // returns { users, portfolios, gallery }
+      .then(res => res.data); // returns ( users, portfolios, gallery )
   }
 }
 

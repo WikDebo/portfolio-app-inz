@@ -1,8 +1,7 @@
 import api from "./api";
 
-// Service to interact with the portfolio backend
 export class PortfolioService {
-  // ===== Portfolio =====
+
   createPortfolio(data: { title?: string; description?: string }) {
     return api.post("/portfolio/user/create", data).then(res => res.data);
   }
@@ -19,7 +18,6 @@ export class PortfolioService {
     return api.get(`/portfolio/${username}`).then(res => res.data);
   }
 
-  // ===== Categories =====
   addCategory(data: { categoryName?: string; description?: string }) {
     return api.post("/portfolio/user/category/create", data).then(res => res.data);
   }
@@ -46,7 +44,6 @@ export class PortfolioService {
     return api.get(`/portfolio/category/${username}/${categoryId}`).then(res => res.data);
   }
 
-  // ===== Portfolio Files =====
   uploadPortfolioFile(categoryId: number, formData: FormData) {
     return api.post(`/portfolio/user/upload/${categoryId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
