@@ -10,7 +10,7 @@
   padding-block: u.rem(50) u.rem(20);
   overflow-y: auto;
   background-color: rgba(152, 143, 129, 0.52);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(u.rem(10));
 
   display: flex;
   align-items: flex-start;
@@ -20,8 +20,9 @@
     background: var(--color-bg);
     border: none;
     border-radius: u.rem(10);
+    margin-top: u.rem(20);
     padding: u.rem(50);
-    width: min(90%, u.rem(600));
+    width: min(80%);
     box-shadow: 0 0 u.rem(20) rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.3s ease-in-out;
   }
@@ -46,7 +47,8 @@
     border: none;
     border-radius: u.rem(10);
     outline: none;
-    background: rgba(145, 99, 8, 0.05);
+    color: var(--color-text);
+    background-color: var(--color-secondary);
     transition: background-color 0.3s ease-in-out;
 
     &:focus {
@@ -56,7 +58,6 @@
 
   &__text {
     margin-top: u.rem(10);
-    //font-size: u.rem(14);
     text-align: center;
 
     span {
@@ -79,32 +80,15 @@
     background-color: var(--color-accent);
     color: var(--color-bg);
     cursor: pointer;
-    //font-size: u.rem(15);
     font-weight: 500;
     transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
-
     &:hover {
       opacity: 1;
       background-color: var(--color-highlight);
     }
   }
-
-  &__close {
-    position: absolute;
-    top: u.rem(15);
-    right: u.rem(35);
-    //font-size: u.rem(40);
-    font-weight: bold;
-    color: rgba(145, 99, 8, 0.23);
-    transition: color 0.4s ease-in-out;
-
-    &:hover,
-    &:focus {
-      color: var(--color-text);
-      cursor: pointer;
-    }
-  }
 }
+
 
 .clearfix::after {
   content: "";
@@ -123,11 +107,12 @@
   }
 }
 
-@include u.breakpoint('medium') {
+@include u.breakpoint-down('large') {
   .modal {
     &__container {
+      justify-content: center;
       padding: u.rem(30);
-      width: 90%;
+      width: 70%;
     }
   }
 }
@@ -136,7 +121,7 @@
   .modal {
     &__container {
       padding: u.rem(20);
-      width: 95%;
+      width: 90%;
     }
   }
 }

@@ -1,6 +1,6 @@
 @use '../util/' as u;
 @import url("https://fonts.googleapis.com/css2?family=Inder&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merienda:wght@300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wdth,wght@0,87.5,100..700;1,87.5,100..700&family=Merienda:wght@300..900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap');
 *,
 *::before,
 *::after {
@@ -9,18 +9,51 @@
 }
 body {
     margin: 0;
-    font-family:"IBM Plex Mono", monospace;
+    font-family:"Mona Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.2;
     -webkit-font-smoothing: antialiased;
-background: radial-gradient(circle,rgba(250, 247, 246, 1) 86%, rgba(250, 247, 246, 0.76) 100%, rgba(211, 181, 160, 0.76) 100%, rgba(220, 122, 52, 0.18) 100%);}
+
 main {
     position: relative;
     box-sizing: inherit;
-    margin: u.rem(5) u.rem(350);
+    margin: u.rem(10) u.rem(350);
     height: 100%;
     min-height: 80vh;
     padding-bottom: u.rem(60);
     padding-top: u.rem(30);
+
+input::file-selector-button {
+    margin: u.rem(10);
+  color: var(--color-text);
+  padding: 0.5em;
+   border: 1px solid var(--color-border);
+   background-color: var(--color-bg);
+  border-radius: u.rem(5);
+  transform: border;
+  cursor: pointer;
+  &:hover{
+    border: u.rem(1) solid hsl(34, 57%, 45%);
+    
+  }
 }
+}
+  @include u.breakpoint-down("large") {
+    main{
+      position: inherit;
+      margin: u.rem(10) u.rem(150);
+      min-height: 100vh;
+    }
+  }
+   
+  @include u.breakpoint-down("medium") {
+    main{
+      position: inherit;
+      margin: u.rem(0) u.rem(10);
+      min-height: 100vh;
+    }
+  }
+   
+} 
+
