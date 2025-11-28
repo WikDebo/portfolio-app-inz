@@ -5,11 +5,10 @@ const GalleryFiles = db.galleryFiles;
 const Likes = db.likes;
 const { Op, fn, col } = require("sequelize");
 
-// Popular (home) feed
 exports.getHomeFeed = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 60;
     const offset = (page - 1) * limit;
 
     const posts = await GalleryFiles.findAll({
@@ -23,15 +22,15 @@ exports.getHomeFeed = async (req, res) => {
           model: Likes,
           as: "likes",
           attributes: [],
-          required: false, // Include posts with no likes
+          required: false, // include posts with 0 likes
         }
       ],
       attributes: {
         include: [[fn("COUNT", col("likes.id")), "likeCount"]],
       },
-
+      
       group: ["gallery_files.id", "user.id"],
-      order: [[fn("COUNT", col("likes.id")), "DESC"]], //Creates a object representing a database function. This can be used in search queries, both in where and order parts, and as default values in column definitions.
+      order: [[fn("COUNT", col("likes.id")), "DESC"]],
       offset,
       limit,
       subQuery: false, //Pagination
@@ -71,12 +70,13 @@ exports.getFollowingFeed = async (req, res) => {
           model: Likes,
           as: "likes",
           attributes: [],
-          required: false, 
+          required: false,
         }
       ],
       attributes: {
         include: [[fn("COUNT", col("likes.id")), "likeCount"]],
       },
+      
       group: ["gallery_files.id", "user.id"],
       order: [["createdAt", "DESC"]],
       offset,

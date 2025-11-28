@@ -4,12 +4,13 @@ const GalleryFiles = db.galleryFiles;
 const User = db.users;
 
 // Upload in gallery
+
 exports.uploadGalleryFiles = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "You must select a file." });
   }
   try {
-    console.log("req.body:", req.body); // to check
+    console.log("req.body:", req.body);
     console.log("req.file:", req.file);
     const savedFile = await GalleryFiles.create({
       type: req.file.mimetype,
@@ -51,7 +52,6 @@ exports.getMyGalleryFiles = async (req, res) => {
 exports.getUserGallery = async (req, res) => {
   const username = req.params.username;
   try {
-
      const user = await User.findOne({
       where: { username },
       attributes: ["id"],
@@ -61,7 +61,6 @@ exports.getUserGallery = async (req, res) => {
       return res.status(404).send({ message: "User not found." });
     }
     const order = req.query.order === "oldest" ? [["createdAt", "ASC"]] : [["createdAt", "DESC"]];
-
     const files = await GalleryFiles.findAll({
       where: { userId: user.id},
       attributes: ["id", "caption","path","userId"],
@@ -104,7 +103,7 @@ exports.deleteFile = async (req, res) => {
   try {
     const file = req.fileRecord; 
 
-    // delete file from filesystem
+    // delete from filesystem if exists
     const fullPath = __dirname + "/../.." + file.path;
 
 if (fs.existsSync(fullPath)) {

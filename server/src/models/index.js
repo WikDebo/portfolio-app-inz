@@ -43,7 +43,7 @@ db.users.hasOne(db.refreshToken, { foreignKey: "userId" });
 
 db.ROLES = ["admin", "user"];
 
-// Users - Users (followers/following)
+// Users - Users (followers(who follows)/following(who am i following))
 db.users.belongsToMany(db.users, {
   through: db.connections,
   as: "Followers",
@@ -100,4 +100,5 @@ db.likes.belongsTo(db.galleryFiles, { foreignKey: "fileId", as: "file" });
 
 db.users.hasMany(db.likes, { foreignKey: "userId", as: "likes" });
 db.galleryFiles.hasMany(db.likes, { foreignKey: "fileId", as: "likes" });
+
 module.exports = db;

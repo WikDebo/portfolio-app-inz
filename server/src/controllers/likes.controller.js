@@ -83,7 +83,6 @@ exports.checkLikeStatus = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-//all the likes
 exports.getLikeCount = async (req, res) => {
   try {
     const count = await Likes.count({
@@ -98,6 +97,7 @@ exports.getLikeCount = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+
 //not used
 exports.getLikeNotifications = async (req, res) => {
   try {

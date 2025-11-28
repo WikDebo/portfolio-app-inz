@@ -97,6 +97,7 @@ exports.getUser = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred while retrieving the user." });
   }
 };
+
 exports.searchUsers = async (req, res) => {
   let { query } = req.query;
 
@@ -122,13 +123,14 @@ exports.deleteProfilePhoto = async (req, res) => {
 
   try {
     const user = await User.findByPk(userId);
-    //delete profile
+
+    // Remove old file
     if (user && user.profilephoto) {
       const oldPath = path.join(__basedir, "/resources/static/assets/uploads/", user.profilephoto);
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }
 
-    // add null to profilephoto
+  // add null to profilephoto
     await User.update({ profilephoto: null }, { where: { id: userId } });
 
     //return updated user

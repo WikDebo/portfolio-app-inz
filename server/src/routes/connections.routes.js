@@ -14,7 +14,7 @@ router.use((req, res, next) => {
 
 // Follow / Unfollow
 router.post("/", [authJwt.verifyToken], controller.createConnection);
-router.delete("/", [authJwt.verifyToken], controller.breakConnection);
+router.delete("/", [authJwt.verifyToken], controller.unfollow);
 
 // Notifications
 router.get("/notifications", [authJwt.verifyToken, changeStatusToSeen], controller.getNotifications);
