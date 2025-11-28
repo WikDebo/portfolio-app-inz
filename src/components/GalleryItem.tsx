@@ -76,7 +76,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
             src={
               user.profilephoto
                 ? `http://localhost:8080/uploads/${user.profilephoto}`
-                : "/silly-seal.gif"
+                : "/preview.png"
             }
             alt={user.username}
             className="feed__profile-img"
@@ -85,22 +85,19 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
         </Link>
       </div>
 
-      {/* Caption */}
       {file.caption && <p className="feed__caption">{file.caption}</p>}
 
-      {/* Image */}
       <img
         src={`http://localhost:8080${file.path}`}
         alt={file.caption || ""}
         className="feed__image"
       />
 
-      {/* Likes & Owner actions */}
       <div className="feed__likeArea">
         {currentUser && (
           <button
             onClick={handleLikeToggle}
-            className={`feed__like ${isLiked ? "liked" : ""}`}
+            className={`feed__like ${isLiked ? "liked" : "not-liked"}`}
             disabled={loading}
           >
             {isLiked ? "Unlike" : "Like"}
@@ -111,9 +108,12 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
         </span>
 
         {isOwner && (
-          <div className="feed__ownerActions">
-            <button onClick={() => onDelete?.(file.id)}>Delete</button>
-          </div>
+          <button
+            className="gallery__modal-delete"
+            onClick={() => onDelete?.(file.id)}
+          >
+            Delete
+          </button>
         )}
       </div>
     </div>

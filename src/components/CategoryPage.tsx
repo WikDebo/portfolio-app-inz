@@ -11,9 +11,8 @@ const CategoryPage: React.FC = () => {
   }>();
   const { currentUser } = useContext(AuthContext);
   const isOwnCategory = !username || username === currentUser?.username;
-
+  const [modalImg, setModalImg] = useState<string | null>(null);
   const [category, setCategory] = useState<ICategory | null>(null);
-  //const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const loadCategory = async () => {
@@ -32,75 +31,39 @@ const CategoryPage: React.FC = () => {
     loadCategory();
   }, [username, categoryId, isOwnCategory]);
 
-  // const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files || !category) return;
-  //   const file = e.target.files[0];
-  //   const formData = new FormData();
-  //   formData.append("image", file);
-
-  //   setUploading(true);
-  //   try {
-  //     await PortfolioService.uploadPortfolioFile(category.id, formData);
-  //     await loadCategory();
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to upload file");
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
-
-  // const handleDeleteFile = async (fileId: number) => {
-  //   if (!window.confirm("Delete this file?")) return;
-  //   await PortfolioService.deletePortfolioFiles([fileId]);
-  //   await loadCategory();
-  // };
-
-  // const canUpload = (category?.portfolioFiles?.length || 0) < 12;
-
   if (!category) return <p>Loading category...</p>;
 
   return (
-    <div className="category-page">
-      <h2>{category.categoryName}</h2>
-      <p>Username: {username || currentUser?.username}</p>
-      <p>{category.description || "No description"}</p>
-
-      {/* {isOwnCategory && (
-        <div>
-          <label className="btn-upload">
-            {uploading ? "Uploading..." : "Upload File"}
-            <input
-              type="file"
-              onChange={handleFileUpload}
-              disabled={uploading || !canUpload}
-            />
-          </label>
-          {!canUpload && <p>Maximum 12 images per category</p>}
-        </div>
-      )} */}
-
-      <div className="gallery__grid">
-        {category.portfolioFiles?.map((file: IPortfolioFile) => (
-          <div key={file.id} className="gallery__item-container">
-            <img
-              src={`http://localhost:8080${file.path}`}
-              alt={file.caption || file.fileName}
-              className="gallery__item"
-            />
-            {/* {isOwnCategory && (
-              <button onClick={() => handleDeleteFile(file.id)}>Delete</button>
-            )} */}
+    <>
+      <aside className="page-content">
+        <div className="category-page">
+          <div className="category-page__left">
+            <h1>{category.categoryName}</h1>
+            <h4 className="small">By {username || currentUser?.username}</h4>
+            <p className="small">{category.description || "No description"}</p>
           </div>
-        ))}
-      </div>
 
-      {/* {isOwnCategory && (
-        <Link to={`/profile/portfolio/category/${categoryId}/edit`}>
-          Edit Category
-        </Link>
-      )} */}
-    </div>
+          <div className="category-page__right">
+            <div className="portfolio__grid">
+              {category.portfolioFiles?.map((file: IPortfolioFile) => (
+                <div key={file.id} className="portfolio__grid-item">
+                  <img
+                    src={`http://localhost:8080${file.path}`}
+                    alt=""
+                    onClick={() => setModalImg(file.path)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>{" "}
+      {modalImg && (
+        <div className="fullscreen-modal" onClick={() => setModalImg(null)}>
+          <img src={`http://localhost:8080${modalImg}`} alt="" />
+        </div>
+      )}
+    </>
   );
 };
 

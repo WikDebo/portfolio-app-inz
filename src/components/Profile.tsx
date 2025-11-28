@@ -5,9 +5,11 @@ import ProfileService from "../services/profile.service";
 import LinksService from "../services/links.service";
 import ConnectionsService from "../services/connections.service";
 import type { IUser, IUserLink } from "../types/user.type";
-import AuthContext from "../context/AuthContext"; // <-- import
+import AuthContext from "../context/AuthContext";
 import GalleryService from "../services/gallery.service";
 import type { IGalleryFile } from "../types/gallery.type";
+import PortfolioService from "../services/portfolio.service";
+import type { IPortfolio } from "../types/portfolio.type";
 
 const Profile: React.FC = () => {
   const { username } = useParams();
@@ -21,7 +23,7 @@ const Profile: React.FC = () => {
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
-
+  const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"followers" | "following" | null>(
     null
@@ -62,7 +64,6 @@ const Profile: React.FC = () => {
     loadUser();
   }, [username, isOwnProfile]);
 
-  //links
   useEffect(() => {
     if (!user) return;
 
@@ -88,7 +89,6 @@ const Profile: React.FC = () => {
           ? await GalleryService.getMyGalleryFiles()
           : await GalleryService.getUserGallery(user!.username);
 
-        // Take first 4-6 items for the snippet
         setGalleryItems(data.slice(0, 10));
       } catch (err) {
         console.error("Gallery snippet load error:", err);
@@ -97,7 +97,21 @@ const Profile: React.FC = () => {
 
     if (user) loadGallerySnippet();
   }, [user, isOwnProfile]);
-  //follow btn
+
+  useEffect(() => {
+    const loadPortfolio = async () => {
+      try {
+        const data = isOwnProfile
+          ? await PortfolioService.getMyPortfolio()
+          : await PortfolioService.getPortfolio(user!.username);
+        setPortfolio(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (user) loadPortfolio();
+  }, [user, isOwnProfile]);
+
   const handleFollow = async () => {
     if (!user) return;
     try {
@@ -138,121 +152,181 @@ const Profile: React.FC = () => {
     setModalType(null);
   };
 
-  if (loadingUser) return <p>Loading...</p>;
+  if (loadingUser)
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="40"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.4"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="100"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="-.2"
+          ></animate>
+        </circle>
+        <circle
+          fill="#DC7A34"
+          stroke="#DC7A34"
+          stroke-width="2"
+          r="15"
+          cx="160"
+          cy="65"
+        >
+          <animate
+            attributeName="cy"
+            calcMode="spline"
+            dur="2"
+            values="65;135;65;"
+            keySplines=".5 0 .5 1;.5 0 .5 1"
+            repeatCount="indefinite"
+            begin="0"
+          ></animate>
+        </circle>
+      </svg>
+    );
+
   if (error) return <p>{error}</p>;
   if (!user) return <p>Could not load profile.</p>;
 
   return (
     <div className="profile">
       <div className="profile__all">
-        {isOwnProfile && (
-          <div className="profile__edit-icon">
-            <Link to="/profile/edit">
-              <span className="material-symbols-outlined">edit</span>
-            </Link>
-          </div>
-        )}
-        <header className="profile__wrapper">
-          <div className="profile__wrapper__info">
-            <h3 className="profile-name">{user.username}</h3>
-            <h4 className="email">{user.email}</h4>
-            <p className="profile-title">{user.usertitle ?? "No title"}</p>
-
-            <div className="profile__wrapper__avatar">
-              <img
-                className="profile__wrapper__avatar-img"
-                src={
-                  user.profilephoto
-                    ? `http://localhost:8080/uploads/${user.profilephoto}`
-                    : "../../public/silly-seal.gif"
-                }
-                alt=""
-              />
+        <aside className="page-content">
+          {isOwnProfile && (
+            <div className="profile__edit-icon">
+              <Link to="/profile/edit">
+                <span className="material-symbols-outlined">edit</span>
+              </Link>
             </div>
+          )}
+          <header className="profile__wrapper">
+            <div className="profile__wrapper__info">
+              <div className="profile__wrapper__avatar">
+                <img
+                  className="profile__wrapper__avatar-img"
+                  src={
+                    user.profilephoto
+                      ? `http://localhost:8080/uploads/${user.profilephoto}`
+                      : "/preview.png"
+                  }
+                  alt=""
+                />
+              </div>
+              <h1>{user.username}</h1>
+              <h3 className="email">{user.email}</h3>
+              <p className="profile-title">{user.usertitle ?? "No title"}</p>
+              {!isOwnProfile && isFollowing !== null && (
+                <>
+                  <button className="btn-follow" onClick={handleFollow}>
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </button>
+                </>
+              )}
+              <span className="profile__wrapper__following">
+                <span onClick={() => openModal("followers")}>
+                  {followerCount} Followers
+                </span>
 
-            {/* follow section*/}
-            {!isOwnProfile && isFollowing !== null && (
-              <>
-                <button className="btn-follow" onClick={handleFollow}>
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </button>
-              </>
-            )}
-            <span className="profile__wrapper__following">
-              <span onClick={() => openModal("followers")}>
-                {followerCount} Followers
+                <span onClick={() => openModal("following")}>
+                  {followingCount} Following
+                </span>
               </span>
 
-              <span onClick={() => openModal("following")}>
-                {followingCount} Following
-              </span>
-            </span>
-            {/* link section*/}
-            <div className="profile-links">
-              <p>You can also follow me on:</p>
-              <div className="link-list">
-                {links.map((l) => (
-                  <div key={l.id} className="link-item">
-                    <a href={l.link} target="_blank" rel="noreferrer">
-                      {l.link}
-                    </a>
-                  </div>
-                ))}
+              <div className="profile-links">
+                <p>You can also follow me on:</p>
+                <div className="link-list">
+                  {links.map((l) => (
+                    <div key={l.id} className="link-item">
+                      <a href={l.link} target="_blank" rel="noreferrer">
+                        {l.link}
+                      </a>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-          {/* about me section*/}
-          <div className="profile__wrapper__info">
-            <section className="profile__section">
-              <h3 className="section-title">About me</h3>
-              <p className="profile__section__about">
-                {user.bio ?? "No bio provided"}
-              </p>
-            </section>
-          </div>
-        </header>
 
-        {/* Portfolio section*/}
-        <section className="profile__section">
-          <h3 className="section-title">My Portfolio</h3>
-          <Link
-            to={`/profile/${user.username}/portfolio`}
-            className="portfolio-link"
-          >
-            View Full Portfolio →
-          </Link>
-        </section>
-        <section className="profile__section">
-          <h3 className="section-title">My Gallery</h3>
-
-          {galleryItems.length > 0 ? (
-            <div className="gallery__grid">
-              {galleryItems.map((f) => (
-                <Link
-                  key={f.id}
-                  to={`/profile/${user!.username}/gallery`}
-                  className="gallery__item-container"
-                >
-                  <img
-                    src={`http://localhost:8080${f.path}`}
-                    alt={f.caption || ""}
-                    className="gallery__item"
-                  />
-                </Link>
-              ))}
+            <div className="profile__wrapper__info">
+              <section className="profile__section">
+                <h3 className="section-title">About me</h3>
+                <p className="medium profile__section__about">
+                  {user.bio ?? "No bio provided"}
+                </p>
+              </section>
             </div>
-          ) : (
-            <p>No gallery items yet.</p>
-          )}
+          </header>
 
-          <Link
-            to={`/profile/${user!.username}/gallery`}
-            className="gallery-snippet__view-all"
-          >
-            View Full Gallery →
-          </Link>
-        </section>
-        {/* follow section - modal*/}
+          <section className="profile__section">
+            <h3 className="section-title">My Portfolio</h3>
+            <Link
+              to={`/profile/${user.username}/portfolio`}
+              className="portfolio-link"
+            >
+              <strong>{portfolio?.title || "No portfolio yet"}</strong>
+              <p className="truncate medium">{portfolio?.description}</p>
+            </Link>
+            <Link to={`/profile/${user.username}/portfolio`}>
+              <p className="medium"> View Full Portfolio →</p>
+            </Link>
+          </section>
+          <section className="profile__section">
+            <h3 className="section-title">My Gallery</h3>
+
+            {galleryItems.length > 0 ? (
+              <div className="gallery__grid">
+                {galleryItems.map((f) => (
+                  <Link
+                    key={f.id}
+                    to={`/profile/${user!.username}/gallery`}
+                    className="gallery__item-container"
+                  >
+                    <img
+                      src={`http://localhost:8080${f.path}`}
+                      alt={f.caption || ""}
+                      className="gallery__item"
+                    />
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p>No gallery items yet.</p>
+            )}
+
+            <Link
+              to={`/profile/${user!.username}/gallery`}
+              className="gallery-snippet__view-all"
+            >
+              View Full Gallery →
+            </Link>
+          </section>
+        </aside>
         {isModalOpen && (
           <div className="modal-backdrop" onClick={closeModal}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -270,7 +344,7 @@ const Profile: React.FC = () => {
                           src={
                             u.profilephoto
                               ? `http://localhost:8080/uploads/${u.profilephoto}`
-                              : "/silly-seal.gif"
+                              : "/preview.png"
                           }
                           alt=""
                           className="feed__profile-img"

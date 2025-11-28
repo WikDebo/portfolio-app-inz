@@ -2,11 +2,17 @@ import React, { useEffect, useState, useContext } from "react";
 import LikesService from "../services/likes.service";
 import AuthContext from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import type { IFeedItem } from "../types/feedItem.type";
+import type { IUser } from "../types/user.type";
 
-const FeedItem: React.FC<IFeedItem> = ({ id, user, path, caption }) => {
+interface FeedItemProps {
+  id: number;
+  user: IUser;
+  path: string;
+  caption?: string;
+}
+
+const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
   const { currentUser } = useContext(AuthContext);
-  //const isOwner = currentUser?.id === user.id;
 
   const [likes, setLikes] = useState<number>(0);
   const [isLiked, setIsLiked] = useState<boolean>(false);
@@ -68,7 +74,7 @@ const FeedItem: React.FC<IFeedItem> = ({ id, user, path, caption }) => {
             src={
               user.profilephoto
                 ? `http://localhost:8080/uploads/${user.profilephoto}`
-                : "/silly-seal.gif"
+                : "/preview.png"
             }
             alt={user.username}
             className="feed__profile-img"
@@ -78,20 +84,17 @@ const FeedItem: React.FC<IFeedItem> = ({ id, user, path, caption }) => {
       </div>
 
       {caption && <p className="feed__caption">{caption}</p>}
-
-      {/* Gallery Item but feed*/}
       <img
         src={`http://localhost:8080${path}`}
         alt={caption || ""}
         className="feed__image"
       />
 
-      {/* Likes */}
       <div className="feed__likeArea">
         {currentUser && (
           <button
             onClick={handleLikeToggle}
-            className={`feed__like ${isLiked ? "liked" : ""}`}
+            className={`feed__like ${isLiked ? "liked" : "not-liked"}`}
             disabled={loading}
           >
             {isLiked ? "Unlike" : "Like"}
@@ -101,14 +104,6 @@ const FeedItem: React.FC<IFeedItem> = ({ id, user, path, caption }) => {
           {likes} {likes === 1 ? "like" : "likes"}
         </span>
       </div>
-
-      {/* Owner actions 
-      {isOwner && (
-        <div className="feed__ownerActions">
-          <button>Edit</button>
-          <button>Delete</button>
-        </div>
-      )}*/}
     </div>
   );
 };
