@@ -13,7 +13,7 @@ instance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
     if (token) {
-      config.headers["x-access-token"] = token; // for Node.js Express back-end
+      config.headers["x-access-token"] = token; 
     }
     return config;
   },
@@ -30,7 +30,7 @@ instance.interceptors.response.use(
     const originalConfig = err.config;
 
     if (originalConfig.url !== "/auth/signin" && err.response) {
-      // Access Token was expired
+      // Access Token expired
       if (err.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
 
@@ -45,7 +45,7 @@ instance.interceptors.response.use(
           console.log("Sending refresh token:", TokenService.getLocalRefreshToken());
           return instance(originalConfig);
         } catch (_error) {
-          EventBus.dispatch("logout");   // ✅ THIS IS THE FIX
+          EventBus.dispatch("logout");
           return Promise.reject(_error);
         }
       }

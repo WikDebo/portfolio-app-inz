@@ -6,7 +6,7 @@ class TokenService {
     try {
       return JSON.parse(stored);
     } catch {
-      localStorage.removeItem("user"); // corrupted data fix
+      localStorage.removeItem("user"); 
       return null;
     }
   }

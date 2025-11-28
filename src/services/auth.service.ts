@@ -36,7 +36,6 @@ class AuthService {
   getCurrentUser() {
     return TokenService.getUser();
   }
-  // auth.service.ts
 
 updateStoredUser(updates: Partial<IUser>) {
   const current = TokenService.getUser(); 
