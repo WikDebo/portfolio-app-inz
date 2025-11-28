@@ -47,8 +47,8 @@ app.use('/api/', searchRoutes);
   initial();
 });
 
-/ after finishing*/ 
-db.sequelize.sync();
+/ after finishing*/
+db.sequelize.sync(); 
 
 async function initial() {
   await Roles.bulkCreate(

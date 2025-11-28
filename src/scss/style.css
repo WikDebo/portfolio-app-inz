@@ -256,8 +256,8 @@ em {
 }
 .home__enter .btn {
   position: relative;
-  padding: 0.0625rem 0.125rem;
-  font-size: 0.0625rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
   background: none;
