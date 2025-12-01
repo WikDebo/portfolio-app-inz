@@ -47,12 +47,12 @@ const Pagination: React.FC<PaginationProps> = ({
             {num === "..." ? (
               <span>…</span>
             ) : (
-              <a
-                className={num === page ? "active" : ""}
+              <button
+                className={num === page ? "btn-special active" : "btn-special"}
                 onClick={() => setPage(Number(num))}
               >
                 {num}
-              </a>
+              </button>
             )}
           </li>
         ))}

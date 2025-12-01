@@ -92,6 +92,7 @@
         border: u.rem(1) solid;
         border-color: var(--color-text);
         background-color: var(--color-header-bg);
+        color: var(--color-text);
         outline: none;
         width: 100%;
         border: 1px solid var(--color-border);
@@ -105,7 +106,7 @@
         resize: none;
       }
       .profile-title {
-        color: var(--color-secondary);
+        color: var(--color-highlight);
         margin-bottom: u.rem(5);
         outline: none;
       }
@@ -146,7 +147,7 @@
         width: 100%;
         margin-top: u.rem(16);
         padding: u.rem(10) u.rem(20);
-        background: var(--color-highlight);
+        background: var(--color-accent);
         color: var(--color-text);
         border: none;
         border-radius: u.rem(10);
@@ -326,7 +327,7 @@
   width: 100%;
   margin-top: u.rem(16);
   padding: u.rem(10) u.rem(20);
-  background: var(--color-highlight);
+  background: var(--color-accent);
   color: var(--color-text);
   border: none;
   border-radius: u.rem(10);
@@ -340,7 +341,8 @@
 .add-btn {
   margin-top: u.rem(16);
   padding: u.rem(10) u.rem(20);
-  background: var(--color-highlight);
+  background: var(--color-accent);
+
   color: var(--color-text);
   border: none;
   border-radius: u.rem(10);

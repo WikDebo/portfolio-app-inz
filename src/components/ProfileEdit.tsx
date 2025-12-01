@@ -17,7 +17,6 @@ import AuthService from "../services/auth.service";
 const ProfileEditing: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<IUser | null>(null);
   const [preview, setPreview] = useState<string>("/preview.png");
   const [file, setFile] = useState<File | null>(null);
@@ -30,7 +29,6 @@ const ProfileEditing: React.FC = () => {
 
   useEffect(() => {
     const loadProfile = async () => {
-      setLoading(true);
       try {
         const resp = await ProfileService.getMyProfile();
         const data = resp.data ?? resp;
@@ -46,8 +44,6 @@ const ProfileEditing: React.FC = () => {
       } catch (err) {
         console.error(err);
         setErrorMsg("Failed to load profile. Please try again.");
-      } finally {
-        setLoading(false);
       }
     };
     loadProfile();
@@ -121,69 +117,9 @@ const ProfileEditing: React.FC = () => {
     }
   };
 
-  if (loading)
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="40"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.4"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="100"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.2"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="160"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="0"
-          ></animate>
-        </circle>
-      </svg>
-    );
-
   return (
     <div className="profile">
-      <aside className="page-content">
+      <div className="page-content">
         <div className="profile__all">
           {errorMsg && <div className="error-msg">{errorMsg}</div>}
           {successMsg && <div className="success-msg">{successMsg}</div>}
@@ -353,19 +289,25 @@ const ProfileEditing: React.FC = () => {
                                 </a>
                                 <br></br>
 
-                                <span
+                                <button
+                                  type="button"
+                                  className="btn-special"
                                   onClick={() => startEdit(l.id, l.link)}
-                                  className="material-symbols-outlined"
                                 >
-                                  edit
-                                </span>
+                                  <i className="material-symbols-outlined">
+                                    edit
+                                  </i>
+                                </button>
 
-                                <span
+                                <button
+                                  type="button"
+                                  className="btn-special"
                                   onClick={() => deleteLink(l.id)}
-                                  className="material-symbols-outlined"
                                 >
-                                  Delete
-                                </span>
+                                  <i className="material-symbols-outlined">
+                                    delete
+                                  </i>
+                                </button>
                               </>
                             )}
                           </div>
@@ -380,11 +322,11 @@ const ProfileEditing: React.FC = () => {
                       <br></br>
                       <Field
                         as="textarea"
-                        name="bio"
+                        name="about me"
                         className="input__about"
                       />
                       <ErrorMessage
-                        name="bio"
+                        name="about me"
                         component="div"
                         className="modal__error"
                       />
@@ -402,7 +344,7 @@ const ProfileEditing: React.FC = () => {
             )}
           </Formik>
         </div>
-      </aside>
+      </div>
     </div>
   );
 };

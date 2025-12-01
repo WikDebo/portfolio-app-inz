@@ -23,9 +23,13 @@ import Footer from "./components/Footer";
 const App: React.FC = () => {
   return (
     <ThemeProvider>
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <Router>
         <Navbar />
-        <main>
+
+        <main id="main-content">
           <ViewTransition>
             <Routes>
               <Route path="/login" element={<LoginModal />} />

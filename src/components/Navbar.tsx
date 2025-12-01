@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import React, { useContext, useState } from "react";
 
 const Navbar: React.FC = () => {
   const { currentUser, logout } = useContext(AuthContext);
@@ -9,12 +10,34 @@ const Navbar: React.FC = () => {
   const profilephoto = currentUser?.profilephoto || "";
   const isAdmin = currentUser?.roles?.includes("ROLE_ADMIN") || false;
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
     navigate("/");
+    setOpenDropdown(false);
+    setBurgerMenuOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutsideDropdown = (e: any) => {
+      if (
+        openDropdown &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        setOpenDropdown(false);
+      }
+    };
+    window.addEventListener("click", handleClickOutsideDropdown);
+    return () => {
+      window.removeEventListener("click", handleClickOutsideDropdown);
+    };
+  }, [openDropdown]);
 
   const renderMainLinks = (onClick?: () => void) => (
     <>
@@ -79,9 +102,9 @@ const Navbar: React.FC = () => {
 
       <div className="header__right">
         {!isLoggedIn ? (
-          <div className="header__btn-menu ">
-            <Link className="btn__outline  " to="/signup">
-              Create account
+          <div className="header__btn-menu">
+            <Link className="btn__outline" to="/signup">
+              Create Account
             </Link>
             <Link className="btn__outline desktop-only" to="/login">
               Sign In
@@ -89,13 +112,17 @@ const Navbar: React.FC = () => {
           </div>
         ) : (
           <div
+            ref={dropdownRef}
             className={`header__user-menu desktop-only tablet-only ${
-              isMenuOpen ? "open" : ""
+              openDropdown ? "open" : ""
             }`}
           >
-            <div
+            <button
               className="dropdown-menu"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenDropdown((prev) => !prev);
+              }}
             >
               <p className="medium username">{username}</p>
               <div className="avatar">
@@ -108,10 +135,11 @@ const Navbar: React.FC = () => {
                   alt="avatar"
                 />
               </div>
-            </div>
-            {isMenuOpen && (
+            </button>
+
+            {openDropdown && (
               <ul className="dropdown">
-                {renderUserDropdown(() => setIsMenuOpen(false))}
+                {renderUserDropdown(() => setOpenDropdown(false))}
               </ul>
             )}
           </div>
@@ -120,14 +148,14 @@ const Navbar: React.FC = () => {
         {isLoggedIn && (
           <button
             className="burger-btn mobile-only"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setBurgerMenuOpen((prev) => !prev)}
           >
-            <a className="material-symbols-outlined burger-menu">menu</a>
+            <span className="material-symbols-outlined burger-menu">menu</span>
           </button>
         )}
       </div>
 
-      {isMenuOpen && isLoggedIn && (
+      {burgerMenuOpen && isLoggedIn && (
         <div className="mobile-dropdown mobile-only">
           <div className="avatar">
             <img
@@ -139,8 +167,8 @@ const Navbar: React.FC = () => {
               alt="avatar"
             />
           </div>
-          {renderMainLinks(() => setIsMenuOpen(false))}
-          {renderUserDropdown(() => setIsMenuOpen(false))}
+          {renderMainLinks(() => setBurgerMenuOpen(false))}
+          <ul>{renderUserDropdown(() => setBurgerMenuOpen(false))}</ul>
         </div>
       )}
     </header>

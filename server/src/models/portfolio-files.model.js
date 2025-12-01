@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
     caption: {
       type: Sequelize.STRING,
     },
+    alt: {
+      type: Sequelize.STRING,
+    },
     path: {
       type: Sequelize.STRING,
       allowNull: false,

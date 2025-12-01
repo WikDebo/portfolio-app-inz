@@ -9,11 +9,35 @@ em {
     font-style: normal;
     background: var(--color-highlight);
 }
+label{
+    color: var(--color-text);
+}
 .title-text{
     font-family: 'Merienda', cursive;
     font-size: 50px;
     font-weight: 800;
     padding: 30px;
+}
+.btn-special{
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.skip-link{
+    position:fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: .5rem;
+    color: var(--color-highlight);
+    translate: 0 -100%; 
+    transition: translate 150ms ease-in-out;
+}
+.skip-link:focus{
+    translate: 0;
 }
 .footer-text{
     font-family: 'Merienda', cursive;

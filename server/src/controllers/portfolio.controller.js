@@ -5,7 +5,7 @@ const PortfolioFiles = db.portfolioFiles;
 const User = db.users;
 const fs = require("fs");
 
-// PORTFOLIO 
+// PORTFOLIO
 //add
 exports.createPortfolio = async (req, res) => {
   try {
@@ -24,10 +24,14 @@ exports.createPortfolio = async (req, res) => {
       userId,
     });
 
-    res.status(201).json({ message: "Portfolio created successfully", portfolio });
+    res
+      .status(201)
+      .json({ message: "Portfolio created successfully", portfolio });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Could not create portfolio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Could not create portfolio", error: err.message });
   }
 };
 //get logged users
@@ -40,17 +44,24 @@ exports.getMyPortfolio = async (req, res) => {
           model: Category,
           as: "categories",
           include: [
-            { model: PortfolioFiles, as: "portfolioFiles", attributes: ["id", "fileName", "path"] },
+            {
+              model: PortfolioFiles,
+              as: "portfolioFiles",
+              attributes: ["id", "fileName", "path"],
+            },
           ],
         },
       ],
       order: [[{ model: Category, as: "categories" }, "id", "ASC"]],
     });
 
-    if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
+    if (!portfolio)
+      return res.status(404).json({ message: "Portfolio not found" });
     res.json(portfolio);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching portfolio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching portfolio", error: err.message });
   }
 };
 
@@ -70,18 +81,25 @@ exports.getPortfolio = async (req, res) => {
           model: Category,
           as: "categories",
           include: [
-            { model: PortfolioFiles, as: "portfolioFiles", attributes: ["id", "fileName", "path"] },
+            {
+              model: PortfolioFiles,
+              as: "portfolioFiles",
+              attributes: ["id", "fileName", "path"],
+            },
           ],
         },
       ],
       order: [[{ model: Category, as: "categories" }, "id", "ASC"]],
     });
 
-    if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
+    if (!portfolio)
+      return res.status(404).json({ message: "Portfolio not found" });
 
     res.json(portfolio);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching portfolio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching portfolio", error: err.message });
   }
 };
 //edit
@@ -91,12 +109,17 @@ exports.editPortfolio = async (req, res) => {
       { title: req.body.title, description: req.body.description || null },
       { where: { userId: req.userId } }
     );
-    if (!updated) return res.status(404).json({ message: "Portfolio not found." });
+    if (!updated)
+      return res.status(404).json({ message: "Portfolio not found." });
 
-    const portfolio = await Portfolio.findOne({ where: { userId: req.userId } });
+    const portfolio = await Portfolio.findOne({
+      where: { userId: req.userId },
+    });
     res.json({ message: "Portfolio updated", portfolio });
   } catch (err) {
-    res.status(500).json({ message: "Error updating portfolio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error updating portfolio", error: err.message });
   }
 };
 
@@ -104,11 +127,17 @@ exports.editPortfolio = async (req, res) => {
 //add
 exports.addCategory = async (req, res) => {
   try {
-    const portfolio = await Portfolio.findOne({ where: { userId: req.userId } });
-    if (!portfolio) return res.status(404).json({ message: "Portfolio not found." });
+    const portfolio = await Portfolio.findOne({
+      where: { userId: req.userId },
+    });
+    if (!portfolio)
+      return res.status(404).json({ message: "Portfolio not found." });
 
-    const count = await Category.count({ where: { portfolioId: portfolio.id } });
-    const categoryName = req.body.categoryName?.trim() || `Category ${count + 1}`;
+    const count = await Category.count({
+      where: { portfolioId: portfolio.id },
+    });
+    const categoryName =
+      req.body.categoryName?.trim() || `Category ${count + 1}`;
 
     const category = await Category.create({
       categoryName,
@@ -118,7 +147,9 @@ exports.addCategory = async (req, res) => {
 
     res.status(201).json({ message: "Category created", category });
   } catch (err) {
-    res.status(500).json({ message: "Could not create category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Could not create category", error: err.message });
   }
 };
 
@@ -129,14 +160,21 @@ exports.getCategoryById = async (req, res) => {
       where: { id: req.params.categoryId },
       include: [
         { model: Portfolio, as: "portfolio", attributes: ["id", "userId"] },
-        { model: PortfolioFiles, as: "portfolioFiles", attributes: ["id", "fileName", "caption", "path"] }
-      ]
+        {
+          model: PortfolioFiles,
+          as: "portfolioFiles",
+          attributes: ["id", "fileName", "caption", "path"],
+        },
+      ],
     });
 
-    if (!category) return res.status(404).json({ message: "Category not found." });
+    if (!category)
+      return res.status(404).json({ message: "Category not found." });
     res.json(category);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching category details", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching category details", error: err.message });
   }
 };
 
@@ -144,31 +182,60 @@ exports.getCategoryById = async (req, res) => {
 exports.getMyCategories = async (req, res) => {
   try {
     const categories = await Category.findAll({
-      include: [{ model: Portfolio, as: "portfolio", where: { userId: req.userId }, attributes: ["id"] }],
+      include: [
+        {
+          model: Portfolio,
+          as: "portfolio",
+          where: { userId: req.userId },
+          attributes: ["id"],
+        },
+      ],
       order: [["id", "ASC"]],
     });
     res.json(categories);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching categories", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching categories", error: err.message });
   }
 };
 
 //get non logged users cats
 exports.getMyCategoryById = async (req, res) => {
   try {
-    const portfolio = await Portfolio.findOne({ where: { userId: req.userId }, attributes: ["id"] });
-    if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
+    const portfolio = await Portfolio.findOne({
+      where: { userId: req.userId },
+      attributes: ["id"],
+    });
+    if (!portfolio)
+      return res.status(404).json({ message: "Portfolio not found" });
 
     const category = await Category.findOne({
       where: { id: req.params.categoryId, portfolioId: portfolio.id },
-      include: [{ model: PortfolioFiles, as: "portfolioFiles", attributes: ["id", "fileName", "caption", "path", "categoryId"] }],
+      include: [
+        {
+          model: PortfolioFiles,
+          as: "portfolioFiles",
+          attributes: [
+            "id",
+            "fileName",
+            "caption",
+            "alt",
+            "path",
+            "categoryId",
+          ],
+        },
+      ],
     });
 
-    if (!category) return res.status(404).json({ message: "Category not found" });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
     res.json(category);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error fetching category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching category", error: err.message });
   }
 };
 
@@ -176,35 +243,69 @@ exports.getMyCategoryById = async (req, res) => {
 exports.getUserCategoryById = async (req, res) => {
   try {
     const { username, categoryId } = req.params;
-    const user = await User.findOne({ where: { username }, attributes: ["id"] });
+    const user = await User.findOne({
+      where: { username },
+      attributes: ["id"],
+    });
     if (!user) return res.status(404).json({ message: "User not found." });
 
-    const portfolio = await Portfolio.findOne({ where: { userId: user.id }, attributes: ["id"] });
+    const portfolio = await Portfolio.findOne({
+      where: { userId: user.id },
+      attributes: ["id"],
+    });
     const category = await Category.findOne({
       where: { id: categoryId, portfolioId: portfolio.id },
-      include: [{ model: PortfolioFiles, as: "portfolioFiles", attributes: ["id", "fileName", "caption", "path", "categoryId"] }]
+      include: [
+        {
+          model: PortfolioFiles,
+          as: "portfolioFiles",
+          attributes: [
+            "id",
+            "fileName",
+            "caption",
+            "alt",
+            "path",
+            "categoryId",
+          ],
+        },
+      ],
     });
 
-    if (!category) return res.status(404).json({ message: "Category not found." });
+    if (!category)
+      return res.status(404).json({ message: "Category not found." });
     res.json(category);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error fetching category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching category", error: err.message });
   }
 };
 //list of all non logged users
 exports.getUserCategories = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.params.username }, attributes: ["id"] });
+    const user = await User.findOne({
+      where: { username: req.params.username },
+      attributes: ["id"],
+    });
     if (!user) return res.status(404).json({ message: "User not found." });
 
     const categories = await Category.findAll({
-      include: [{ model: Portfolio, as: "portfolio", where: { userId: user.id }, attributes: ["id"] }],
+      include: [
+        {
+          model: Portfolio,
+          as: "portfolio",
+          where: { userId: user.id },
+          attributes: ["id"],
+        },
+      ],
       order: [["id", "ASC"]],
     });
     res.json(categories);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching categories", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching categories", error: err.message });
   }
 };
 
@@ -212,13 +313,19 @@ exports.getUserCategories = async (req, res) => {
 exports.editCategory = async (req, res) => {
   try {
     const [updated] = await Category.update(
-      { categoryName: req.body.categoryName, description: req.body.description || null },
+      {
+        categoryName: req.body.categoryName,
+        description: req.body.description || null,
+      },
       { where: { id: req.params.categoryId } }
     );
-    if (!updated) return res.status(404).json({ message: "Category not found." });
+    if (!updated)
+      return res.status(404).json({ message: "Category not found." });
     res.json({ message: "Category updated" });
   } catch (err) {
-    res.status(500).json({ message: "Error updating category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error updating category", error: err.message });
   }
 };
 
@@ -227,15 +334,18 @@ exports.deleteCategory = async (req, res) => {
   try {
     const category = await Category.findOne({
       where: { id: req.params.categoryId },
-      include: [{ model: Portfolio, as: "portfolio" }]
+      include: [{ model: Portfolio, as: "portfolio" }],
     });
-    if (!category) return res.status(404).json({ message: "Category not found." });
+    if (!category)
+      return res.status(404).json({ message: "Category not found." });
 
     if (req.userRole !== "admin" && category.portfolio.userId !== req.userId) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
-    const files = await PortfolioFiles.findAll({ where: { categoryId: category.id } });
+    const files = await PortfolioFiles.findAll({
+      where: { categoryId: category.id },
+    });
     for (const file of files) {
       if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
       await PortfolioFiles.destroy({ where: { id: file.id } });
@@ -244,31 +354,41 @@ exports.deleteCategory = async (req, res) => {
     await Category.destroy({ where: { id: category.id } });
     res.json({ message: "Category deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Error deleting category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting category", error: err.message });
   }
 };
 
-//PORTFOLIO FILES 
+//PORTFOLIO FILES
 //upload
 exports.uploadPortfolioFiles = async (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded." });
 
   try {
-    const portfolio = await Portfolio.findOne({ where: { userId: req.userId } });
+    const portfolio = await Portfolio.findOne({
+      where: { userId: req.userId },
+    });
     const category = await Category.findByPk(req.params.categoryId);
-    if (!portfolio || !category) return res.status(404).json({ message: "Portfolio or category not found." });
+    if (!portfolio || !category)
+      return res
+        .status(404)
+        .json({ message: "Portfolio or category not found." });
 
     const file = await PortfolioFiles.create({
       fileName: req.file.originalname,
       caption: req.body.caption || null,
       path: `/uploads/${req.file.filename}`,
+      alt: req.body.alt || null,
       categoryId: category.id,
       portfolioId: portfolio.id,
     });
 
     res.status(201).json({ message: "File uploaded", file });
   } catch (err) {
-    res.status(500).json({ message: "Could not upload file", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Could not upload file", error: err.message });
   }
 };
 
@@ -277,63 +397,82 @@ exports.getMyPortfolioFiles = async (req, res) => {
   try {
     const files = await PortfolioFiles.findAll({
       include: [
-        { 
-          model: Category, 
-          as: "category", 
-          attributes: ["id", "categoryName"], 
+        {
+          model: Category,
+          as: "category",
+          attributes: ["id", "categoryName"],
           include: [
-            { model: Portfolio, as: "portfolio", where: { userId: req.userId }, attributes: ["id"] }
-          ] 
-        }
+            {
+              model: Portfolio,
+              as: "portfolio",
+              where: { userId: req.userId },
+              attributes: ["id"],
+            },
+          ],
+        },
       ],
     });
     res.json(files);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching files", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching files", error: err.message });
   }
 };
 
 //non logged users files
 exports.getPortfolioFiles = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.params.username }, attributes: ["id"] });
+    const user = await User.findOne({
+      where: { username: req.params.username },
+      attributes: ["id"],
+    });
     if (!user) return res.status(404).json({ message: "User not found." });
 
     const files = await PortfolioFiles.findAll({
       include: [
-        { 
-          model: Category, 
-          as: "category", 
-          attributes: ["id", "categoryName"], 
+        {
+          model: Category,
+          as: "category",
+          attributes: ["id", "categoryName"],
           include: [
-            { model: Portfolio, as: "portfolio", where: { userId: user.id }, attributes: ["id"] }
-          ] 
-        }
+            {
+              model: Portfolio,
+              as: "portfolio",
+              where: { userId: user.id },
+              attributes: ["id"],
+            },
+          ],
+        },
       ],
     });
     res.json(files);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching files", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching files", error: err.message });
   }
 };
 
 //delete files + admin (not used)
 exports.deletePortfolioFiles = async (req, res) => {
   try {
-    const file = await PortfolioFiles.findByPk(req.params.id, 
-      { include: [
-        { 
-          model: Category, 
-          as: "category", 
+    const file = await PortfolioFiles.findByPk(req.params.id, {
+      include: [
+        {
+          model: Category,
+          as: "category",
           attributes: ["id", "categoryName"],
-          include: [
-            { model: Portfolio, as: "portfolio"}
-          ] 
-        }
-      ], });
+          include: [{ model: Portfolio, as: "portfolio" }],
+        },
+      ],
+    });
     if (!file) return res.status(404).json({ message: "File not found." });
 
-    if (req.userRole !== "admin" && file.category.portfolio.userId !== req.userId) {
+    if (
+      req.userRole !== "admin" &&
+      file.category.portfolio.userId !== req.userId
+    ) {
       return res.status(403).json({ message: "Not authorized." });
     }
 
@@ -342,9 +481,8 @@ exports.deletePortfolioFiles = async (req, res) => {
 
     res.json({ message: "File deleted." });
   } catch (err) {
-    res.status(500).json({ message: "Error deleting file", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting file", error: err.message });
   }
 };
-
-
-

@@ -34,7 +34,7 @@ input::file-selector-button {
   transform: border;
   cursor: pointer;
   &:hover{
-    border: u.rem(1) solid hsl(34, 57%, 45%);
+    border: u.rem(1) solid var(--color-highlight);
     
   }
 }

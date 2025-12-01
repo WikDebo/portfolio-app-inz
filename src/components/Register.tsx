@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import AuthService from "../services/auth.service.ts";
@@ -56,10 +56,17 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
       setError("Signup failed. Email or username may already exist.");
     }
   };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [closeModal]);
 
   return (
-    <div className="modal" onClick={closeModal}>
-      <div className="modal__container" onClick={(e) => e.stopPropagation()}>
+    <span className="modal" tabIndex={-1} onClick={closeModal}>
+      <a className="modal__container" onClick={(e) => e.stopPropagation()}>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -77,6 +84,7 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
               id="email"
               name="email"
               placeholder="Enter email"
+              required
             />
             <ErrorMessage
               name="email"
@@ -92,6 +100,7 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
               id="username"
               name="username"
               placeholder="Enter username"
+              required
             />
             <ErrorMessage
               name="username"
@@ -107,6 +116,7 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
               id="password"
               name="password"
               placeholder="Enter Password"
+              required
             />
             <ErrorMessage
               name="password"
@@ -122,6 +132,7 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
               id="repeatPassword"
               name="repeatPassword"
               placeholder="Repeat Password"
+              required
             />
             <ErrorMessage
               name="repeatPassword"
@@ -139,8 +150,8 @@ const Signup: React.FC<SignupProps> = ({ closeModal, switchToLogin }) => {
             </p>
           </Form>
         </Formik>
-      </div>
-    </div>
+      </a>
+    </span>
   );
 };
 

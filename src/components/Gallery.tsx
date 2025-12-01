@@ -14,6 +14,7 @@ const Gallery: React.FC = () => {
   const [files, setFiles] = useState<IGalleryFile[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [caption, setCaption] = useState("");
+  const [alt, setAlt] = useState("");
   const [message, setMessage] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<{
     user: IUser;
@@ -50,6 +51,7 @@ const Gallery: React.FC = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("caption", caption);
+    formData.append("alt", alt);
 
     try {
       setUploading(true);
@@ -64,6 +66,7 @@ const Gallery: React.FC = () => {
       setFiles([fileWithUser, ...files]);
       setFile(null);
       setCaption("");
+      setAlt("");
       setPreview("/preview.png");
       setMessage(response.message || "Upload successful!");
     } catch (err: any) {
@@ -94,23 +97,37 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="gallery">
-      <aside className="page-content">
+      <div className="page-content">
         <h2 className="gallery__title">
           {isOwner ? "My Gallery" : `${username}'s Gallery`}
         </h2>
 
         {isOwner && (
           <div className="gallery__upload">
+            <label htmlFor="file-upload">Select image:</label>
             {file && (
-              <img className="gallery__preview" src={preview} alt="Preview" />
+              <img
+                className="gallery__preview"
+                src={preview}
+                alt="Preview of selected image"
+              />
             )}
             <input type="file" onChange={selectImage} />
+            <label htmlFor="caption-input">Caption:</label>
             <input
               className="title__input"
               type="text"
               placeholder="Caption"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
+            />
+            <label htmlFor="alt-input">Alt text:</label>
+            <input
+              className="title__input"
+              type="text"
+              placeholder="Alt"
+              value={alt}
+              onChange={(e) => setAlt(e.target.value)}
             />
             <button
               className="save-btn"
@@ -126,7 +143,7 @@ const Gallery: React.FC = () => {
 
         <div className="gallery__grid">
           {files.map((file) => (
-            <div
+            <button
               key={file.id}
               className="gallery__item-container"
               onClick={() => {
@@ -139,19 +156,23 @@ const Gallery: React.FC = () => {
             >
               <img
                 src={`http://localhost:8080${file.path}`}
-                alt={file.caption || ""}
+                alt={file.alt || "Gallery image"}
                 className="gallery__item"
               />
-            </div>
+            </button>
           ))}
         </div>
-      </aside>
+      </div>
       {selectedItem && (
-        <div className="modal" onClick={() => setSelectedItem(null)}>
-          <div className="modal__content" onClick={(e) => e.stopPropagation()}>
+        <span className="modal" onClick={() => setSelectedItem(null)}>
+          <span className="modal__content" onClick={(e) => e.stopPropagation()}>
             <GalleryItem {...selectedItem} onDelete={handleDelete} />
-          </div>
-        </div>
+          </span>{" "}
+          <button
+            className="btn-special"
+            onClick={() => setSelectedItem(null)}
+          ></button>
+        </span>
       )}
     </div>
   );

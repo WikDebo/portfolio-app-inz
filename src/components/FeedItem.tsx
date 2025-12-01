@@ -9,14 +9,20 @@ interface FeedItemProps {
   user: IUser;
   path: string;
   caption?: string;
+  alt?: string;
 }
 
-const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
+const FeedItem: React.FC<FeedItemProps> = ({
+  id,
+  user,
+  path,
+  caption,
+  alt,
+}) => {
   const { currentUser } = useContext(AuthContext);
 
   const [likes, setLikes] = useState<number>(0);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLikes = async () => {
@@ -44,9 +50,8 @@ const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
   }, [id, currentUser]);
 
   const handleLikeToggle = async () => {
-    if (!currentUser || loading) return;
+    if (!currentUser) return;
 
-    setLoading(true);
     try {
       if (isLiked) {
         await LikesService.unlikeFile(id);
@@ -59,7 +64,6 @@ const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
     } catch (err) {
       console.error("Error toggling like:", err);
     }
-    setLoading(false);
   };
 
   return (
@@ -76,7 +80,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
                 ? `http://localhost:8080/uploads/${user.profilephoto}`
                 : "/preview.png"
             }
-            alt={user.username}
+            alt={`Profile photo of ${user.username}`}
             className="feed__profile-img"
           />
           <p className="medium feed__profilename">{user.username}</p>
@@ -86,7 +90,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
       {caption && <p className="feed__caption">{caption}</p>}
       <img
         src={`http://localhost:8080${path}`}
-        alt={caption || ""}
+        alt={alt || "User uploaded image"}
         className="feed__image"
       />
 
@@ -95,7 +99,6 @@ const FeedItem: React.FC<FeedItemProps> = ({ id, user, path, caption }) => {
           <button
             onClick={handleLikeToggle}
             className={`feed__like ${isLiked ? "liked" : "not-liked"}`}
-            disabled={loading}
           >
             {isLiked ? "Unlike" : "Like"}
           </button>

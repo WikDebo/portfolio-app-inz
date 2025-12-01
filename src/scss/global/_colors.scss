@@ -1,11 +1,11 @@
 :root,
 [data-theme="light"] {
     --color-bg: hsl(15, 29%, 97%);
-    --color-header-bg: hsla(60, 12%, 95%, 0.397);
-    --color-text: hsl(80, 16%, 15%);
-    --color-accent: #dc7a34;
-    --color-secondary: #d3b5a0;
-    --color-highlight: #dc7a34;
+    --color-header-bg: hsla(60, 12%, 95%, 0.199);
+    //--color-text: hsl(60, 53%, 3%);
+    --color-accent: hsl(60, 53%, 40%);
+    --color-secondary: hsl(60, 64%, 75%);
+    --color-highlight: hsl(60, 37%, 28%);
     --color-border: hsl(60, 3%, 92%);
     --color-text: hsl(80, 16%, 15%);
     --color-dark-1: hsla(80, 16%, 15%, 0.637);
@@ -15,11 +15,11 @@
 }
 [data-theme="dark"],
 body.dark {
-  --color-bg: hsl(24, 33%, 3%);
-  --color-text: hsl(80, 16%, 85%);
-  --color-accent: hsl(25, 82%, 53%);
-  --color-secondary: hsl(26, 37%, 27%);
-  --color-highlight: hsl(25, 82%, 56%);
+  --color-bg: hsl(60, 20%, 2%);
+  --color-text: hsl(60, 50%, 97%);
+  --color-accent: hsla(60, 72%, 31%, 0.788);
+  --color-secondary: hsl(60, 64%, 25%);
+  --color-highlight: hsl(60, 75%, 40%);
   --color-border: #2a2a2a;
    --color-dark-1: hsla(80, 16%, 15%, 0.637);
     --color-dark-2: hsla(80, 16%, 15%, 0.473);

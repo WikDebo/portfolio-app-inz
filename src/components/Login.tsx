@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import AuthService from "../services/auth.service.ts";
@@ -42,10 +42,17 @@ const Login: React.FC<Props> = ({
     }
     setLoading(false);
   };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [closeModal]);
 
   return (
-    <div className="modal" onClick={closeModal}>
-      <div className="modal__container" onClick={(e) => e.stopPropagation()}>
+    <span className="modal" tabIndex={-1} onClick={closeModal}>
+      <a className="modal__container" onClick={(e) => e.stopPropagation()}>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -97,8 +104,8 @@ const Login: React.FC<Props> = ({
             </p>
           </Form>
         </Formik>
-      </div>
-    </div>
+      </a>
+    </span>
   );
 };
 

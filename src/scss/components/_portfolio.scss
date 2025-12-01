@@ -70,6 +70,7 @@
       border-radius: u.rem(8);
       border: u.rem(1) solid;
       border-color: var(--color-text);
+      color: var(--color-text);
       background-color: var(--color-header-bg);
       outline: none;
       width: 100%;
@@ -319,11 +320,11 @@
   }
   @include u.breakpoint-down("medium") {
     img {
-    max-width: u.rem(350);
-    max-height: auto;
-    border-radius: u.rem(5);
-    animation: fadeIn 0.3s ease-out;
-  }
+      max-width: u.rem(350);
+      max-height: auto;
+      border-radius: u.rem(5);
+      animation: fadeIn 0.3s ease-out;
+    }
   }
 }
 

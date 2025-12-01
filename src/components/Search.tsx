@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import searchService from "../services/search.service";
 import type { IGalleryFile } from "../types/gallery.type";
@@ -25,11 +24,9 @@ function SearchPage() {
   const [portfolios, setPortfolios] = useState<IPortfolio[]>([]);
   const [gallery, setGallery] = useState<IGalleryFile[]>([]);
   const [modalItem, setModalItem] = useState<ModalItem | null>(null);
-  const [loading, setLoading] = useState(false);
   const [searchTab, setSearchTab] = useState<SearchTab>("All");
 
   const runSearch = async (q: string) => {
-    setLoading(true);
     try {
       const response: ISearchResponse = await searchService.searchEverything(q);
 
@@ -40,11 +37,9 @@ function SearchPage() {
 
       setUsers(response.users);
       setPortfolios(mappedPortfolios);
-      setGallery(response.gallery);
+      setGallery(response.gallery.slice(0, 40));
     } catch (err) {
       console.error("Search failed:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -57,65 +52,6 @@ function SearchPage() {
     navigate(`/search?query=${encodeURIComponent(q)}`);
     runSearch(q);
   };
-  if (loading)
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="40"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.4"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="100"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.2"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="160"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="0"
-          ></animate>
-        </circle>
-      </svg>
-    );
 
   return (
     <div className="search">
@@ -141,8 +77,6 @@ function SearchPage() {
         </button>
       </form>
 
-      {loading}
-
       <div className="search__tabspace">
         {[
           {
@@ -163,7 +97,7 @@ function SearchPage() {
         ))}
       </div>
 
-      <aside className="page-content">
+      <div className="page-content">
         {(searchTab === "All" || searchTab === "Users") && users.length > 0 && (
           <div className="search__info">
             {users.map((u) => (
@@ -190,7 +124,7 @@ function SearchPage() {
             ))}
           </div>
         )}
-      </aside>
+      </div>
       <div className="page-content">
         {(searchTab === "All" || searchTab === "Portfolios") &&
           portfolios.length > 0 && (
@@ -215,7 +149,7 @@ function SearchPage() {
           gallery.length > 0 && (
             <div className="gallery__grid">
               {gallery.map((g) => (
-                <div
+                <button
                   key={g.id}
                   className="gallery__item-container"
                   onClick={() => {
@@ -226,17 +160,17 @@ function SearchPage() {
                 >
                   <img
                     src={`http://localhost:8080${g.path}`}
-                    alt={g.caption || "Gallery Image"}
+                    alt={g.alt || "Gallery Image"}
                     className="gallery__item"
                   />
-                </div>
+                </button>
               ))}
             </div>
           )}
       </div>
       {modalItem && (
-        <div onClick={() => setModalItem(null)} className="modal">
-          <div onClick={(e) => e.stopPropagation()} className="modal__content">
+        <span onClick={() => setModalItem(null)} className="modal">
+          <span onClick={(e) => e.stopPropagation()} className="modal__content">
             <GalleryItem
               file={modalItem.file}
               user={modalItem.user}
@@ -247,8 +181,8 @@ function SearchPage() {
                 setModalItem(null);
               }}
             />
-          </div>
-        </div>
+          </span>
+        </span>
       )}
     </div>
   );

@@ -13,8 +13,8 @@ const PrivateRoutes: React.FC<PrivateRouteProps> = ({ children, roles }) => {
   if (!currentUser) {
     return (
       <div className="home">
-        <div className="home__enter">
-          <aside className="page-content">
+        <section className="home__enter">
+          <div className="page-content">
             <h1 className="title-text">Create. Inspire. Encourage.</h1>
             <h2>Expand your horizons</h2>
             <p>
@@ -27,8 +27,8 @@ const PrivateRoutes: React.FC<PrivateRouteProps> = ({ children, roles }) => {
                 <span className="small">Start Your Journey</span>
               </NavLink>
             </button>
-          </aside>
-        </div>
+          </div>
+        </section>
       </div>
     );
   }

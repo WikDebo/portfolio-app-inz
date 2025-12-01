@@ -17,6 +17,7 @@ exports.uploadGalleryFiles = async (req, res) => {
       fileName: req.file.originalname,
       path: `/uploads/${req.file.filename}` ,
       caption: req.body.caption || null,
+      alt: req.body.alt || null,
       userId: req.userId,
     });
 
@@ -63,7 +64,7 @@ exports.getUserGallery = async (req, res) => {
     const order = req.query.order === "oldest" ? [["createdAt", "ASC"]] : [["createdAt", "DESC"]];
     const files = await GalleryFiles.findAll({
       where: { userId: user.id},
-      attributes: ["id", "caption","path","userId"],
+       attributes: ["id", "caption","alt","path","userId"],
        include: [{ model: User, as: "user", attributes: ["id","username","profilephoto"] }],
       order
     });

@@ -2,8 +2,9 @@ import type { IUser } from "./user.type";
 
 export interface IFeedItem {
   id: number;
-  user: IUser
+  user: IUser;
   path: string;
   caption?: string;
+  alt?: string;
   likeCount: number;
 }

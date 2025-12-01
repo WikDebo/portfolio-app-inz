@@ -9,12 +9,12 @@ const Portfolio: React.FC = () => {
   const { currentUser } = useContext(AuthContext);
   const isOwnPortfolio = !username || username === currentUser?.username;
   const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadPortfolio = async () => {
-      setLoading(true);
+      //setLoading(true);
       try {
         const data = isOwnPortfolio
           ? await PortfolioService.getMyPortfolio()
@@ -23,76 +23,16 @@ const Portfolio: React.FC = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     };
     loadPortfolio();
   }, [username, isOwnPortfolio]);
 
-  if (loading)
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="40"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.4"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="100"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.2"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="160"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="0"
-          ></animate>
-        </circle>
-      </svg>
-    );
-
   if (!portfolio) {
     return (
       <div>
-        <aside className="page-content">
+        <div className="page-content">
           <h2>No portfolio found</h2>
           {isOwnPortfolio ? (
             <button
@@ -104,7 +44,7 @@ const Portfolio: React.FC = () => {
           ) : (
             <p>This user has no portfolio</p>
           )}
-        </aside>
+        </div>
       </div>
     );
   }
@@ -112,7 +52,7 @@ const Portfolio: React.FC = () => {
   return (
     <div className="portfolio">
       <div className="portfolio__all">
-        <aside className="page-content">
+        <div className="page-content">
           {isOwnPortfolio && (
             <div className="profile__edit-icon">
               <Link to="/profile/portfolio/edit">
@@ -148,7 +88,7 @@ const Portfolio: React.FC = () => {
                 </h2>
               ))}
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   );

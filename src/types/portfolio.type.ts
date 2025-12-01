@@ -3,7 +3,7 @@ import type { IUser } from "./user.type";
 export interface IPortfolio {
   id: number;
   title: string;
-  description?: string | null;
+  description?: string;
   userId?: number;
   user?: IUser;
   categories?: ICategory[];
@@ -12,7 +12,7 @@ export interface IPortfolio {
 export interface ICategory {
   id: number;
   categoryName: string;
-  description?: string | null;
+  description?: string;
   portfolioFiles?: IPortfolioFile[];
   portfolioId: number;
 }
@@ -20,7 +20,8 @@ export interface ICategory {
 export interface IPortfolioFile {
   id: number;
   fileName: string;
-  caption?: string | null;
+  caption?: string;
+  alt?: string;
   path: string;
   categoryId?: number;
 }

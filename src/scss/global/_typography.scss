@@ -23,6 +23,9 @@ h2 {
   @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(22), u.rem(24));
   
 }
+h3{
+  color: var(--color-text)
+}
 h4 {
   @include u.fs-fluid(u.rem(375), u.rem(1200), u.rem(24), u.rem(16));
   color: var(--color-accent);

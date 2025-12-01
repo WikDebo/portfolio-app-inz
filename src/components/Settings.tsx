@@ -5,6 +5,7 @@ import AuthContext from "../context/AuthContext";
 import { useTheme } from "../context/ThemeProvider";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 interface EmailValues {
   email: string;
@@ -16,13 +17,13 @@ interface PasswordValues {
 }
 
 export default function Settings() {
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const { logout } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState("");
-
+  const navigate = useNavigate();
   const validationSchemaAccount = Yup.object().shape({
     email: Yup.string()
       .email("This is not a valid email.")
@@ -48,7 +49,7 @@ export default function Settings() {
       } catch (err) {
         console.error("Failed to load profile", err);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     };
     loadProfile();
@@ -109,7 +110,7 @@ export default function Settings() {
       await ProfileService.deleteMyAccount();
       setMessage("Your account has been deleted.");
       logout();
-      window.location.href = "/";
+      navigate("/", { replace: true });
     } catch (err: any) {
       console.error(err);
       setMessage(err?.response?.data?.message || "Failed to delete account");
@@ -118,69 +119,9 @@ export default function Settings() {
     }
   };
 
-  if (loading)
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="40"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.4"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="100"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.2"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="160"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="0"
-          ></animate>
-        </circle>
-      </svg>
-    );
-
   return (
     <div className="settings">
-      <aside className="page-content">
+      <div className="page-content">
         <div className="settings__all">
           <h2>Settings</h2>
 
@@ -280,12 +221,12 @@ export default function Settings() {
 
           <section className="settings__section">
             <h3>Toggle theme</h3>
-            <div
+            <button
               className={`toggle__button ${theme === "dark" ? "active" : ""}`}
               onClick={toggleTheme}
             >
               <span className="toggle__circle"></span>
-            </div>
+            </button>
           </section>
 
           <section className="settings__section">
@@ -296,7 +237,7 @@ export default function Settings() {
 
           {message && <div className="message">{message}</div>}
         </div>
-      </aside>
+      </div>
     </div>
   );
 }

@@ -14,6 +14,8 @@
     cursor: pointer;
     overflow: hidden;
     border-radius: u.rem(5);
+    border: none;
+    background: transparent;
 
     &:hover .feed-grid__wrapper {
       opacity: 1;
@@ -50,7 +52,7 @@
 
     &-name {
       font-weight: 500;
-      margin-top: u.rem(0);
+      margin-top: u.rem(5);
       margin-left: u.rem(10);
       color: var(--color-text);
     }
@@ -141,6 +143,7 @@
   }
 
   &__caption {
+    text-align: left;
     color: var(--color-text);
     margin-left: u.rem(15);
     gap: u.rem(0);
@@ -175,7 +178,7 @@
 
       &.not-liked {
         background: var(--color-accent);
-        color: var(--color-bg);
+        color: var(--color-text);
       }
 
       &:disabled {

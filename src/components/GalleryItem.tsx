@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext, useEffect, useState } from "react";
 import LikesService from "../services/likes.service";
 import AuthContext from "../context/AuthContext";
@@ -15,7 +14,6 @@ interface GalleryItemProps {
 const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
   const { currentUser } = useContext(AuthContext);
   const isOwner = currentUser?.id === user.id;
-
   const [likes, setLikes] = useState<number>(0);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -78,7 +76,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
                 ? `http://localhost:8080/uploads/${user.profilephoto}`
                 : "/preview.png"
             }
-            alt={user.username}
+            alt={`profile photo of ${user.username}`}
             className="feed__profile-img"
           />
           <p className="medium feed__profilename">{user.username}</p>
@@ -86,10 +84,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ file, user, onDelete }) => {
       </div>
 
       {file.caption && <p className="feed__caption">{file.caption}</p>}
-
       <img
         src={`http://localhost:8080${file.path}`}
-        alt={file.caption || ""}
+        alt={file.alt || "User uploaded image"}
         className="feed__image"
       />
 

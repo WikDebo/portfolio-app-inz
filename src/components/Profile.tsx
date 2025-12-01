@@ -29,12 +29,10 @@ const Profile: React.FC = () => {
     null
   );
 
-  const [loadingUser, setLoadingUser] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
-      setLoadingUser(true);
       try {
         const resp = isOwnProfile
           ? await ProfileService.getMyProfile()
@@ -56,8 +54,6 @@ const Profile: React.FC = () => {
       } catch (err) {
         console.error("Profile load error:", err);
         setError("Unable to load profile.");
-      } finally {
-        setLoadingUser(false);
       }
     };
 
@@ -152,73 +148,13 @@ const Profile: React.FC = () => {
     setModalType(null);
   };
 
-  if (loadingUser)
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="40"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.4"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="100"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="-.2"
-          ></animate>
-        </circle>
-        <circle
-          fill="#DC7A34"
-          stroke="#DC7A34"
-          stroke-width="2"
-          r="15"
-          cx="160"
-          cy="65"
-        >
-          <animate
-            attributeName="cy"
-            calcMode="spline"
-            dur="2"
-            values="65;135;65;"
-            keySplines=".5 0 .5 1;.5 0 .5 1"
-            repeatCount="indefinite"
-            begin="0"
-          ></animate>
-        </circle>
-      </svg>
-    );
-
   if (error) return <p>{error}</p>;
   if (!user) return <p>Could not load profile.</p>;
 
   return (
     <div className="profile">
       <div className="profile__all">
-        <aside className="page-content">
+        <div className="page-content">
           {isOwnProfile && (
             <div className="profile__edit-icon">
               <Link to="/profile/edit">
@@ -236,7 +172,7 @@ const Profile: React.FC = () => {
                       ? `http://localhost:8080/uploads/${user.profilephoto}`
                       : "/preview.png"
                   }
-                  alt=""
+                  alt={user.username}
                 />
               </div>
               <h1>{user.username}</h1>
@@ -250,13 +186,19 @@ const Profile: React.FC = () => {
                 </>
               )}
               <span className="profile__wrapper__following">
-                <span onClick={() => openModal("followers")}>
-                  {followerCount} Followers
-                </span>
+                <button
+                  className="btn-special"
+                  onClick={() => openModal("followers")}
+                >
+                  <p className="medium"> {followerCount} Followers</p>
+                </button>
 
-                <span onClick={() => openModal("following")}>
-                  {followingCount} Following
-                </span>
+                <button
+                  className="btn-special"
+                  onClick={() => openModal("following")}
+                >
+                  <p className="medium"> {followingCount} Following</p>
+                </button>
               </span>
 
               <div className="profile-links">
@@ -309,7 +251,7 @@ const Profile: React.FC = () => {
                   >
                     <img
                       src={`http://localhost:8080${f.path}`}
-                      alt={f.caption || ""}
+                      alt={f.alt || ""}
                       className="gallery__item"
                     />
                   </Link>
@@ -326,10 +268,16 @@ const Profile: React.FC = () => {
               View Full Gallery →
             </Link>
           </section>
-        </aside>
+        </div>
         {isModalOpen && (
-          <div className="modal-backdrop" onClick={closeModal}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="modal-backdrop" onClick={closeModal}>
+            <span
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <a onClick={closeModal}>Close</a>
+              <br></br>
+              <br></br>
               <h3>{modalType === "followers" ? "Followers" : "Following"}</h3>
               <ul>
                 {(modalType === "followers" ? followers : following).map(
@@ -355,9 +303,8 @@ const Profile: React.FC = () => {
                   )
                 )}
               </ul>
-              <button onClick={closeModal}>Close</button>
-            </div>
-          </div>
+            </span>
+          </button>
         )}
       </div>
     </div>

@@ -5,9 +5,10 @@ export interface IGalleryFile {
   id: number;
   path: string;
   caption?: string;
+  alt?: string;
   createdAt?: string;
-  likes: number;            // total likes
-  likedByUser: boolean;     // whether this user liked the file
+  likes: number;
+  likedByUser: boolean;
   user: IUser; 
 }
 

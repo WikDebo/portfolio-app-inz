@@ -66,7 +66,7 @@ const PortfolioEditPage: React.FC = () => {
   };
 
   return (
-    <aside className="page-content">
+    <div className="page-content">
       <div className="portfolio">
         <div className="portfolio__all">
           <h2>
@@ -80,7 +80,7 @@ const PortfolioEditPage: React.FC = () => {
                 handleSavePortfolio();
               }}
             >
-              <label>
+              <label htmlFor="portfolio-title">
                 Title:
                 <input
                   className="title__input"
@@ -89,7 +89,7 @@ const PortfolioEditPage: React.FC = () => {
                 />
               </label>
               <br></br>
-              <label>
+              <label htmlFor="portfolio-description">
                 Description:
                 <textarea
                   className="input__desc"
@@ -118,12 +118,14 @@ const PortfolioEditPage: React.FC = () => {
                           onChange={(e) => setNewCategoryName(e.target.value)}
                         />
                         <button
+                          type="button"
                           className="portfolio__add-category__btn"
                           onClick={handleConfirmAddCategory}
                         >
                           Add
                         </button>
                         <button
+                          type="button"
                           className="portfolio__add-category__btn"
                           onClick={() => setIsAdding(false)}
                         >
@@ -138,12 +140,12 @@ const PortfolioEditPage: React.FC = () => {
                       <Link to={`/profile/portfolio/category/${cat.id}/edit`}>
                         <i className="material-symbols-outlined">edit</i>
                       </Link>
-                      <a
+                      <button
                         onClick={() => handleDeleteCategory(cat.id)}
-                        className="material-symbols-outlined"
+                        className="btn-special material-symbols-outlined"
                       >
                         delete
-                      </a>
+                      </button>
                     </div>
                   ))}
                 </>
@@ -155,7 +157,7 @@ const PortfolioEditPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </aside>
+    </div>
   );
 };
 

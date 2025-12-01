@@ -55,7 +55,7 @@
       transition: color 0.3s ease-in-out;
 
       &.active {
-        color: var(--color-accent);
+        color: var(--color-highlight);
       }
 
       &:hover {
@@ -114,6 +114,7 @@
     .header__user-menu {
       position: relative;
       display: inline-block;
+
       .dropdown-menu {
         display: inline-flex;
         align-items: center;
@@ -121,7 +122,7 @@
         gap: u.rem(8);
         padding-right: u.rem(15);
         cursor: pointer;
-
+        background: transparent;
         border: none;
         p {
           color: var(--color-text);
@@ -177,7 +178,6 @@
             text-decoration: none;
             color: inherit;
           }
-
           &:hover {
             background: var(--color-secondary);
             color: var(--color-text);
@@ -185,15 +185,11 @@
         }
       }
 
-      &:hover .dropdown {
-        height: auto;
-        transform: translateY(0);
-
-        display: block;
-      }
     }
   }
-
+  .header__user-menu.open .dropdown {
+    display: block;
+  }
   @include u.breakpoint-down("large") {
     .desktop-only {
       display: block;
@@ -225,6 +221,20 @@
     .mobile-only {
       display: flex;
       align-items: center;
+    }
+ 
+      .dropdown {
+       cursor: pointer;
+        color: var(--color-text);
+        font-size: u.rem(16);
+        text-align: center;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        padding: 0 ;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        
     }
     .burger-btn {
       display: flex;
@@ -293,6 +303,7 @@
           color: var(--color-text);
         }
       }
+    
       li {
         cursor: pointer;
         color: var(--color-text);

@@ -9,6 +9,7 @@ const CategoryEditPage: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [caption, setCaption] = useState("");
+  const [alt, setAlt] = useState("");
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [files, setFiles] = useState<IPortfolioFile[]>([]);
@@ -57,6 +58,7 @@ const CategoryEditPage: React.FC = () => {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("caption", caption);
+    formData.append("alt", alt);
 
     try {
       setUploading(true);
@@ -67,6 +69,7 @@ const CategoryEditPage: React.FC = () => {
       setFiles((prev) => [response.file, ...prev]);
       setFile(null);
       setCaption("");
+      setAlt("");
       setMessage(response.message || "Upload successful!");
     } catch (err: any) {
       console.error(err);
@@ -88,8 +91,8 @@ const CategoryEditPage: React.FC = () => {
   };
 
   return (
-    <aside className="page-content">
-      <div className="portfolio">
+    <div className="page-content">
+      <section className="portfolio">
         <div className="portfolio__all">
           <h2>Edit Category</h2>
           <div className="portfolio__input">
@@ -99,7 +102,7 @@ const CategoryEditPage: React.FC = () => {
                 handleSave();
               }}
             >
-              <label>
+              <label htmlFor="title-input">
                 Title:{" "}
                 <input
                   className="title__input"
@@ -108,7 +111,7 @@ const CategoryEditPage: React.FC = () => {
                 />
               </label>
               <br></br>
-              <label>
+              <label htmlFor="desc-input">
                 Description:{" "}
                 <textarea
                   className="input__desc"
@@ -118,21 +121,31 @@ const CategoryEditPage: React.FC = () => {
               </label>
 
               {canUpload && (
-                <div className="gallery__upload">
+                <fieldset className="gallery__upload">
                   {file && (
                     <img
                       className="gallery__preview"
                       src={preview}
-                      alt="Preview"
+                      alt="Preview of your photo"
                     />
                   )}
+                  <label htmlFor="file-upload">Select image:</label>
                   <input type="file" onChange={selectImage} />
+                  <label htmlFor="caption-input">Caption:</label>
                   <input
                     className="title__input"
                     type="text"
                     placeholder="Caption"
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
+                  />
+                  <label htmlFor="alt-input">Alt text:</label>
+                  <input
+                    className="title__input"
+                    type="text"
+                    placeholder="Alt"
+                    value={alt}
+                    onChange={(e) => setAlt(e.target.value)}
                   />
                   <button
                     className="save-btn"
@@ -141,25 +154,29 @@ const CategoryEditPage: React.FC = () => {
                   >
                     {uploading ? "Uploading..." : "Upload"}
                   </button>
-                </div>
+                </fieldset>
               )}
               {!canUpload && <p>Maximum 12 photos</p>}
-              {message && <p className="gallery__message">{message}</p>}
+              {message && (
+                <p className="gallery__message" role="alert">
+                  {message}
+                </p>
+              )}
 
               <div className="gallery__grid">
                 {files.map((f) => (
                   <div key={f.id} className="gallery__item-container">
                     <img
                       src={`http://localhost:8080${f.path}`}
-                      alt={f.caption || ""}
+                      alt={f.alt || ""}
                       className="gallery__item"
                     />
-                    <a
+                    <button
                       onClick={() => handleDeleteFile(f.id)}
-                      className="material-symbols-outlined"
+                      className="btn-special material-symbols-outlined"
                     >
                       Delete
-                    </a>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -169,8 +186,8 @@ const CategoryEditPage: React.FC = () => {
             </form>
           </div>
         </div>
-      </div>
-    </aside>
+      </section>
+    </div>
   );
 };
 

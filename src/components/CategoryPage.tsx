@@ -1,8 +1,13 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
 import PortfolioService from "../services/portfolio.service";
 import type { ICategory, IPortfolioFile } from "../types/portfolio.type";
 import AuthContext from "../context/AuthContext";
+
+interface ModalImg {
+  src: string;
+  alt: string;
+}
 
 const CategoryPage: React.FC = () => {
   const { username, categoryId } = useParams<{
@@ -11,8 +16,10 @@ const CategoryPage: React.FC = () => {
   }>();
   const { currentUser } = useContext(AuthContext);
   const isOwnCategory = !username || username === currentUser?.username;
-  const [modalImg, setModalImg] = useState<string | null>(null);
+
   const [category, setCategory] = useState<ICategory | null>(null);
+  const [modalImg, setModalImg] = useState<ModalImg | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadCategory = async () => {
@@ -31,11 +38,20 @@ const CategoryPage: React.FC = () => {
     loadCategory();
   }, [username, categoryId, isOwnCategory]);
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalImg(null);
+    };
+    if (modalImg) document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalImg]);
+
   if (!category) return <p>Loading category...</p>;
 
   return (
     <>
-      <aside className="page-content">
+      <div className="page-content">
         <div className="category-page">
           <div className="category-page__left">
             <h1>{category.categoryName}</h1>
@@ -46,21 +62,48 @@ const CategoryPage: React.FC = () => {
           <div className="category-page__right">
             <div className="portfolio__grid">
               {category.portfolioFiles?.map((file: IPortfolioFile) => (
-                <div key={file.id} className="portfolio__grid-item">
+                <button
+                  key={file.id}
+                  className="btn-special portfolio__grid-item"
+                  onClick={() =>
+                    setModalImg({
+                      src: file.path,
+                      alt: file.alt || file.caption || "Portfolio image",
+                    })
+                  }
+                >
                   <img
                     src={`http://localhost:8080${file.path}`}
-                    alt=""
-                    onClick={() => setModalImg(file.path)}
+                    alt={file.alt || file.caption || "Portfolio image"}
                   />
-                </div>
+                </button>
               ))}
             </div>
           </div>
         </div>
-      </aside>{" "}
+      </div>
+
       {modalImg && (
-        <div className="fullscreen-modal" onClick={() => setModalImg(null)}>
-          <img src={`http://localhost:8080${modalImg}`} alt="" />
+        <div
+          ref={modalRef}
+          className="fullscreen-modal"
+          role="dialog"
+          tabIndex={-1}
+          onClick={() => setModalImg(null)}
+        >
+          <div
+            className="fullscreen-modal__content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="btn-special fullscreen-modal__close"
+              onClick={() => setModalImg(null)}
+            ></button>
+            <img
+              src={`http://localhost:8080${modalImg.src}`}
+              alt={modalImg.alt}
+            />
+          </div>
         </div>
       )}
     </>
