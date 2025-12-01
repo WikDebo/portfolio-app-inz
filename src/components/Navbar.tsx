@@ -168,7 +168,9 @@ const Navbar: React.FC = () => {
             />
           </div>
           {renderMainLinks(() => setBurgerMenuOpen(false))}
-          <ul>{renderUserDropdown(() => setBurgerMenuOpen(false))}</ul>
+          <ul className="dropdown">
+            {renderUserDropdown(() => setBurgerMenuOpen(false))}
+          </ul>
         </div>
       )}
     </header>

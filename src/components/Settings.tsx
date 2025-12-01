@@ -154,7 +154,7 @@ export default function Settings() {
 
           <section className="settings__section">
             <h3>Change Password</h3>
-            <br />
+
             <Formik
               initialValues={{
                 oldPassword: "",

@@ -1779,12 +1779,12 @@ label {
   border-radius: 0.625rem;
   outline: none;
   color: var(--color-text);
-  background-color: var(--color-secondary);
+  background-color: var(--color-header-bg);
   transition: background-color 0.3s ease-in-out;
 }
 .modal input[type=text]:focus,
 .modal input[type=password]:focus {
-  background-color: var(--color-secondary);
+  background-color: var(--color-header-bg);
 }
 .modal__text {
   margin-top: 0.625rem;
